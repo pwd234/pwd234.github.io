@@ -143,8 +143,17 @@ body {
   <button class="restart-btn" onclick="restartGame()">再来一局</button>
 </div>
 <!-- 背景音乐标签 - 隐藏式，循环播放 -->
-<audio id="bgMusic" loop preload="auto" style="display: none;">
-  <source src="tiger.mp3" type="audio/mpeg">
+<audio id="bgMusic" src="tiger.mp3" loop style="display: none;"></audio>
+
+<script>
+  // 用户首次点击页面任意位置时开始播放
+  document.body.addEventListener('click', function() {
+    var audio = document.getElementById('bgMusic');
+    if (audio.paused) {
+      audio.play().catch(e => console.log('播放失败:', e));
+    }
+  });
+</script>
 
 <script>
 const gameArea = document.getElementById('gameArea');
