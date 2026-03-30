@@ -463,7 +463,7 @@
             <div class="instructions">
                 <p>使用方向按钮控制跳跳虎移动，从起点到达终点。收集星星可减少步数。</p>
                 <div class="music-controls">
-                    <button class="music-btn" id="music-toggle">🔊</button>
+                    <button class="music-btn" id="music-toggle">🔇</button>
                     <span>背景音乐</span>
                 </div>
             </div>
@@ -497,8 +497,11 @@
         <p>跳跳虎迷宫大冒险 - 为康佳萍制作 | 专为微信优化</p>
     </div>
     
+    <!-- 音频元素 -->
     <audio id="background-music" loop preload="auto">
+        <!-- 如果tiger.mp3不可用，使用备用音频 -->
         <source src="tiger.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3" type="audio/mpeg">
     </audio>
     
     <script>
@@ -518,7 +521,7 @@
             let gameTime = 0;
             let gameInterval;
             let gameActive = false;
-            let musicEnabled = true;
+            let musicEnabled = false; // 默认关闭，需要用户手动开启
             let stars = [];
             let collectedStars = 0;
             let totalMoves = 0;
@@ -526,7 +529,7 @@
             let animationId = null;
             let countdownTimer = null;
             let countdownSeconds = 3;
-            let audioContextInitialized = false;
+            let audioInitialized = false;
             let isWeChat = /MicroMessenger/i.test(navigator.userAgent);
             
             // 鼓励语数组
@@ -664,50 +667,84 @@
                 // 设置音乐音量
                 backgroundMusic.volume = 0.5;
                 
-                // 微信中自动初始化音频
-                if (isWeChat) {
-                    document.addEventListener('touchstart', function initAudio() {
-                        if (!audioContextInitialized) {
-                            backgroundMusic.load();
-                            audioContextInitialized = true;
-                            console.log("微信音频已初始化");
-                        }
-                        document.removeEventListener('touchstart', initAudio);
-                    }, { once: true });
-                }
+                // 初始化音乐状态
+                musicToggle.textContent = "🔇";
+                musicEnabled = false;
                 
+                // 音乐按钮点击事件
                 musicToggle.addEventListener('click', function() {
                     musicEnabled = !musicEnabled;
+                    
                     if (musicEnabled) {
-                        backgroundMusic.play().catch(e => {
-                            console.log("音乐播放失败:", e);
-                        });
+                        // 尝试播放音乐
+                        playBackgroundMusic();
                         musicToggle.textContent = "🔊";
                     } else {
                         backgroundMusic.pause();
                         musicToggle.textContent = "🔇";
                     }
                 });
+                
+                // 在用户交互时解锁音频
+                document.addEventListener('touchstart', unlockAudio, { once: true });
+                document.addEventListener('click', unlockAudio, { once: true });
+            }
+            
+            // 解锁音频
+            function unlockAudio() {
+                const backgroundMusic = document.getElementById('background-music');
+                
+                // 尝试播放静音音频以解锁音频上下文
+                backgroundMusic.muted = true;
+                backgroundMusic.play().then(() => {
+                    backgroundMusic.pause();
+                    backgroundMusic.muted = false;
+                    audioInitialized = true;
+                    console.log("音频上下文已解锁");
+                }).catch(e => {
+                    console.log("音频解锁失败:", e);
+                });
+            }
+            
+            // 播放背景音乐
+            function playBackgroundMusic() {
+                if (!musicEnabled) return;
+                
+                const backgroundMusic = document.getElementById('background-music');
+                
+                // 确保音频已加载
+                backgroundMusic.load();
+                
+                // 尝试播放
+                const playPromise = backgroundMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("背景音乐开始播放");
+                    }).catch(error => {
+                        console.log("自动播放被阻止:", error);
+                        // 显示提示，让用户手动点击播放
+                        alert("请点击页面任意位置以启用背景音乐");
+                    });
+                }
             }
             
             // 微信特定优化
             function setupWeChatOptimizations() {
                 // 防止微信下拉刷新
                 document.addEventListener('touchmove', function(e) {
-                    e.preventDefault();
+                    if (e.target.className !== 'direction-btn') {
+                        e.preventDefault();
+                    }
                 }, { passive: false });
                 
-                // 阻止微信默认行为
-                document.addEventListener('gesturestart', function(e) {
-                    e.preventDefault();
-                });
-                
-                // 处理微信中的音频自动播放
-                document.addEventListener('WeixinJSBridgeReady', function() {
-                    const bgm = document.getElementById('background-music');
-                    bgm.load();
-                    audioContextInitialized = true;
-                });
+                // 处理微信JSBridge
+                if (typeof WeixinJSBridge !== 'undefined') {
+                    document.addEventListener('WeixinJSBridgeReady', function() {
+                        console.log("微信JSBridge已就绪");
+                        unlockAudio();
+                    });
+                }
             }
             
             // 清除倒计时
@@ -798,19 +835,55 @@
                 
                 addExtraWalls(rows, cols, extraWalls);
                 
+                // 设置起点
                 player.x = 1;
                 player.y = 1;
                 maze[player.y][player.x] = 0;
                 
-                // 设置终点在右下角
-                exit.x = cols - 2;
-                exit.y = rows - 2;
+                // 设置终点 - 确保在右下角且可达
+                setExitPosition(rows, cols);
                 
-                // 确保终点是通路
+                console.log(`第${currentLevel}关: 起点(${player.x},${player.y}) 终点(${exit.x},${exit.y})`);
+            }
+            
+            // 设置出口位置
+            function setExitPosition(rows, cols) {
+                // 尝试在右下角区域找到合适的位置
+                const exitCandidates = [];
+                
+                // 右下角区域
+                const startRow = Math.max(rows - 4, 1);
+                const startCol = Math.max(cols - 4, 1);
+                
+                for (let y = startRow; y < rows - 1; y++) {
+                    for (let x = startCol; x < cols - 1; x++) {
+                        // 检查是否是通路且不靠近起点
+                        if (maze[y][x] === 0 && 
+                            (Math.abs(x - player.x) + Math.abs(y - player.y)) > Math.min(rows, cols) / 2) {
+                            exitCandidates.push({x, y});
+                        }
+                    }
+                }
+                
+                if (exitCandidates.length > 0) {
+                    // 随机选择一个候选位置
+                    const randomIndex = Math.floor(Math.random() * exitCandidates.length);
+                    exit = exitCandidates[randomIndex];
+                } else {
+                    // 如果没有找到合适的位置，使用右下角的位置
+                    exit.x = cols - 2;
+                    exit.y = rows - 2;
+                    
+                    // 确保出口是通路
+                    if (maze[exit.y][exit.x] === 1) {
+                        maze[exit.y][exit.x] = 0;
+                        // 确保出口可达
+                        ensureExitAccessible();
+                    }
+                }
+                
+                // 最终确保出口是通路
                 maze[exit.y][exit.x] = 0;
-                
-                // 确保终点可达
-                ensureExitAccessible();
                 
                 // 确保有通路
                 ensurePath(player.x, player.y, exit.x, exit.y, rows, cols);
@@ -872,6 +945,7 @@
                     }
                 }
                 
+                // 设置边界
                 for (let x = 0; x < cols; x++) {
                     maze[0][x] = 1;
                     maze[rows-1][x] = 1;
@@ -1035,6 +1109,7 @@
                     }
                 }
                 
+                // 如果没有通路，创建一条
                 let x = startX, y = startY;
                 
                 while (!(x === endX && y === endY)) {
@@ -1049,6 +1124,12 @@
                     }
                     
                     maze[y][x] = 0;
+                    
+                    // 确保路径宽度
+                    if (x > 0 && (x-1 !== startX || y !== startY)) maze[y][x-1] = 0;
+                    if (x < cols-1 && (x+1 !== startX || y !== startY)) maze[y][x+1] = 0;
+                    if (y > 0 && (x !== startX || y-1 !== startY)) maze[y-1][x] = 0;
+                    if (y < rows-1 && (x !== startX || y+1 !== startY)) maze[y+1][x] = 0;
                 }
                 
                 return true;
@@ -1083,9 +1164,11 @@
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
+                // 绘制背景
                 ctx.fillStyle = '#1a1a3a';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
+                // 绘制墙壁
                 for (let y = 0; y < mazeHeight; y++) {
                     for (let x = 0; x < mazeWidth; x++) {
                         if (maze[y][x] === 1) {
@@ -1102,6 +1185,7 @@
                     }
                 }
                 
+                // 绘制星星
                 stars.forEach(star => {
                     const x = star.x * cellSize + cellSize / 2;
                     const y = star.y * cellSize + cellSize / 2;
@@ -1139,27 +1223,49 @@
                     ctx.shadowBlur = 0;
                 });
                 
+                // 绘制出口 - 确保出口可见
                 const exitX = exit.x * cellSize;
                 const exitY = exit.y * cellSize;
                 
                 if (exitX >= 0 && exitX < canvas.width && exitY >= 0 && exitY < canvas.height) {
+                    // 绘制出口背景发光效果
                     ctx.shadowColor = '#ff4444';
-                    ctx.shadowBlur = 12;
+                    ctx.shadowBlur = 15;
                     
+                    // 绘制出口方块
                     ctx.fillStyle = '#ff4444';
                     ctx.fillRect(exitX, exitY, cellSize, cellSize);
                     
+                    // 出口边框
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(exitX + 2, exitY + 2, cellSize - 4, cellSize - 4);
+                    
                     ctx.shadowBlur = 0;
                     
+                    // 出口文字
                     ctx.fillStyle = 'white';
-                    ctx.font = `bold ${Math.max(cellSize/2, 10)}px Arial`;
+                    const fontSize = Math.max(cellSize/2, 10);
+                    ctx.font = `bold ${fontSize}px Arial`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText('出', exitX + cellSize / 2, exitY + cellSize / 2);
+                    
+                    // 添加额外的出口标记（确保可见）
+                    ctx.fillStyle = '#ffff00';
+                    ctx.beginPath();
+                    ctx.arc(exitX + cellSize/2, exitY + cellSize/2, cellSize/3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // 重新绘制文字
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fillText('出', exitX + cellSize / 2, exitY + cellSize / 2);
                 }
                 
+                // 绘制跳跳虎
                 drawTiger(player.x, player.y);
                 
+                // 绘制关卡信息
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                 ctx.fillRect(5, 5, 100, 35);
                 
@@ -1235,11 +1341,9 @@
                 
                 animateTiger();
                 
+                // 如果音乐已启用，播放背景音乐
                 if (musicEnabled) {
-                    const backgroundMusic = document.getElementById('background-music');
-                    backgroundMusic.play().catch(e => {
-                        console.log("音乐播放失败:", e);
-                    });
+                    playBackgroundMusic();
                 }
             }
             
