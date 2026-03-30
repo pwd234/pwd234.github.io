@@ -68,18 +68,22 @@ body {
 </div>
 
 <script>
-<!-- 背景音乐标签 - 隐藏式，循环播放 -->
-<audio id="bgMusic" src="tiger.mp3" loop style="display: none;"></audio>
+const bgm = new Audio("https://cdn.pixabay.com/download/audio/2022/01/18/audio_1bcfd5419d.mp3");
+bgm.loop = true; bgm.volume = 0.25;
 
-<script>
-  // 用户首次点击页面任意位置时开始播放
-  document.body.addEventListener('click', function() {
-    var audio = document.getElementById('bgMusic');
-    if (audio.paused) {
-      audio.play().catch(e => console.log('播放失败:', e));
-    }
-  });
-</script>
+const moveSound = new Audio("https://cdn.pixabay.com/download/audio/2021/08/03/audio_17c503ad04.mp3");
+moveSound.volume = 0.4;
+
+const winSound = new Audio("https://cdn.pixabay.com/download/audio/2022/09/12/audio_19d723a59d.mp3");
+winSound.volume = 0.6;
+
+const finalWinSound = new Audio("https://cdn.pixabay.com/download/audio/2022/08/23/audio_84b82207aa.mp3");
+finalWinSound.volume = 0.7;
+
+function playBGM() { bgm.play().catch(()=>{}); }
+function playMove() { moveSound.currentTime=0; moveSound.play().catch(()=>{}); }
+function playWin() { winSound.currentTime=0; winSound.play().catch(()=>{}); }
+function playFinalWin() { finalWinSound.currentTime=0; finalWinSound.play().catch(()=>{}); }
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
