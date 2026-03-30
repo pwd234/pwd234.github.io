@@ -499,9 +499,7 @@
     
     <!-- 音频元素 -->
     <audio id="background-music" loop preload="auto">
-        <!-- 如果tiger.mp3不可用，使用备用音频 -->
         <source src="tiger.mp3" type="audio/mpeg">
-        <source src="https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3" type="audio/mpeg">
     </audio>
     
     <script>
@@ -521,7 +519,7 @@
             let gameTime = 0;
             let gameInterval;
             let gameActive = false;
-            let musicEnabled = false; // 默认关闭，需要用户手动开启
+            let musicEnabled = false;
             let stars = [];
             let collectedStars = 0;
             let totalMoves = 0;
@@ -546,18 +544,18 @@
                 "康佳萍，你真是个游戏高手！为你喝彩！"
             ];
             
-            // 关卡配置
+            // 调整后的关卡配置 - 大幅缩小迷宫尺寸，确保出口可见
             const levelConfigs = [
-                { rows: 9, cols: 9, stars: 1, complexity: 0.4, algorithm: "dfs", extraWalls: 3 },
-                { rows: 11, cols: 11, stars: 1, complexity: 0.45, algorithm: "dfs", extraWalls: 5 },
-                { rows: 13, cols: 13, stars: 2, complexity: 0.5, algorithm: "prim", extraWalls: 8 },
-                { rows: 15, cols: 15, stars: 2, complexity: 0.55, algorithm: "prim", extraWalls: 10 },
-                { rows: 17, cols: 17, stars: 3, complexity: 0.6, algorithm: "dfs", extraWalls: 12 },
-                { rows: 19, cols: 19, stars: 3, complexity: 0.65, algorithm: "prim", extraWalls: 15 },
-                { rows: 21, cols: 21, stars: 4, complexity: 0.7, algorithm: "dfs", extraWalls: 18 },
-                { rows: 23, cols: 23, stars: 4, complexity: 0.75, algorithm: "prim", extraWalls: 20 },
-                { rows: 25, cols: 25, stars: 5, complexity: 0.8, algorithm: "dfs", extraWalls: 22 },
-                { rows: 27, cols: 27, stars: 5, complexity: 0.85, algorithm: "prim", extraWalls: 25 }
+                { rows: 7, cols: 7, stars: 1, complexity: 0.4, algorithm: "dfs", extraWalls: 2 },
+                { rows: 9, cols: 9, stars: 1, complexity: 0.45, algorithm: "dfs", extraWalls: 3 },
+                { rows: 11, cols: 11, stars: 2, complexity: 0.5, algorithm: "prim", extraWalls: 4 },
+                { rows: 13, cols: 13, stars: 2, complexity: 0.55, algorithm: "prim", extraWalls: 5 },
+                { rows: 15, cols: 15, stars: 3, complexity: 0.6, algorithm: "dfs", extraWalls: 6 },
+                { rows: 17, cols: 17, stars: 3, complexity: 0.65, algorithm: "prim", extraWalls: 7 },
+                { rows: 19, cols: 19, stars: 4, complexity: 0.7, algorithm: "dfs", extraWalls: 8 },
+                { rows: 21, cols: 21, stars: 4, complexity: 0.75, algorithm: "prim", extraWalls: 9 },
+                { rows: 23, cols: 23, stars: 5, complexity: 0.8, algorithm: "dfs", extraWalls: 10 },
+                { rows: 25, cols: 25, stars: 5, complexity: 0.85, algorithm: "prim", extraWalls: 12 }
             ];
             
             // 初始化游戏
@@ -723,8 +721,6 @@
                         console.log("背景音乐开始播放");
                     }).catch(error => {
                         console.log("自动播放被阻止:", error);
-                        // 显示提示，让用户手动点击播放
-                        alert("请点击页面任意位置以启用背景音乐");
                     });
                 }
             }
@@ -843,50 +839,63 @@
                 // 设置终点 - 确保在右下角且可达
                 setExitPosition(rows, cols);
                 
-                console.log(`第${currentLevel}关: 起点(${player.x},${player.y}) 终点(${exit.x},${exit.y})`);
-            }
-            
-            // 设置出口位置
-            function setExitPosition(rows, cols) {
-                // 尝试在右下角区域找到合适的位置
-                const exitCandidates = [];
-                
-                // 右下角区域
-                const startRow = Math.max(rows - 4, 1);
-                const startCol = Math.max(cols - 4, 1);
-                
-                for (let y = startRow; y < rows - 1; y++) {
-                    for (let x = startCol; x < cols - 1; x++) {
-                        // 检查是否是通路且不靠近起点
-                        if (maze[y][x] === 0 && 
-                            (Math.abs(x - player.x) + Math.abs(y - player.y)) > Math.min(rows, cols) / 2) {
-                            exitCandidates.push({x, y});
-                        }
-                    }
-                }
-                
-                if (exitCandidates.length > 0) {
-                    // 随机选择一个候选位置
-                    const randomIndex = Math.floor(Math.random() * exitCandidates.length);
-                    exit = exitCandidates[randomIndex];
-                } else {
-                    // 如果没有找到合适的位置，使用右下角的位置
-                    exit.x = cols - 2;
-                    exit.y = rows - 2;
-                    
-                    // 确保出口是通路
-                    if (maze[exit.y][exit.x] === 1) {
-                        maze[exit.y][exit.x] = 0;
-                        // 确保出口可达
-                        ensureExitAccessible();
-                    }
-                }
-                
-                // 最终确保出口是通路
-                maze[exit.y][exit.x] = 0;
-                
                 // 确保有通路
                 ensurePath(player.x, player.y, exit.x, exit.y, rows, cols);
+                
+                console.log(`第${currentLevel}关: 迷宫大小${rows}x${cols}, 起点(${player.x},${player.y}), 终点(${exit.x},${exit.y})`);
+            }
+            
+            // 设置出口位置 - 完全重写，确保出口可见
+            function setExitPosition(rows, cols) {
+                // 将出口设置在右下角，但距离边界至少1格
+                exit.x = cols - 2;
+                exit.y = rows - 2;
+                
+                // 确保出口是通路
+                maze[exit.y][exit.x] = 0;
+                
+                // 确保出口周围至少有一个方向是通路
+                ensureExitAccessible();
+                
+                console.log(`出口设置为: (${exit.x}, ${exit.y})`);
+            }
+            
+            // 确保出口可达
+            function ensureExitAccessible() {
+                const directions = [
+                    {dx: 0, dy: -1}, // 上
+                    {dx: 1, dy: 0},  // 右
+                    {dx: 0, dy: 1},  // 下
+                    {dx: -1, dy: 0}  // 左
+                ];
+                
+                // 检查出口是否已经是通路
+                if (maze[exit.y][exit.x] !== 0) {
+                    maze[exit.y][exit.x] = 0;
+                }
+                
+                // 检查出口周围是否有通路
+                let accessible = false;
+                for (const dir of directions) {
+                    const nx = exit.x + dir.dx;
+                    const ny = exit.y + dir.dy;
+                    if (nx >= 0 && nx < mazeWidth && ny >= 0 && ny < mazeHeight && maze[ny][nx] === 0) {
+                        accessible = true;
+                        break;
+                    }
+                }
+                
+                // 如果出口不可达，打通一个方向
+                if (!accessible) {
+                    // 优先打通上方的墙壁
+                    if (exit.y > 0) {
+                        maze[exit.y - 1][exit.x] = 0;
+                    } 
+                    // 如果上方不行，打通左方
+                    else if (exit.x > 0) {
+                        maze[exit.y][exit.x - 1] = 0;
+                    }
+                }
             }
             
             // 深度优先搜索算法
@@ -895,7 +904,7 @@
                 for (let y = 0; y < rows; y++) {
                     maze[y] = [];
                     for (let x = 0; x < cols; x++) {
-                        maze[y][x] = 1;
+                        maze[y][x] = 1; // 1表示墙
                     }
                 }
                 
@@ -1034,41 +1043,6 @@
                        Math.abs(x - exit.x) <= 3 && Math.abs(y - exit.y) <= 3;
             }
             
-            // 确保终点可达
-            function ensureExitAccessible() {
-                const directions = [
-                    {dx: 0, dy: -1},
-                    {dx: 1, dy: 0},
-                    {dx: 0, dy: 1},
-                    {dx: -1, dy: 0}
-                ];
-                
-                if (maze[exit.y][exit.x] !== 0) {
-                    maze[exit.y][exit.x] = 0;
-                }
-                
-                let accessible = false;
-                for (const dir of directions) {
-                    const nx = exit.x + dir.dx;
-                    const ny = exit.y + dir.dy;
-                    if (nx >= 0 && nx < mazeWidth && ny >= 0 && ny < mazeHeight && maze[ny][nx] === 0) {
-                        accessible = true;
-                        break;
-                    }
-                }
-                
-                if (!accessible) {
-                    for (const dir of directions) {
-                        const nx = exit.x + dir.dx;
-                        const ny = exit.y + dir.dy;
-                        if (nx >= 0 && nx < mazeWidth && ny >= 0 && ny < mazeHeight) {
-                            maze[ny][nx] = 0;
-                            break;
-                        }
-                    }
-                }
-            }
-            
             // 添加墙到列表
             function addWalls(x, y, walls, rows, cols) {
                 if (y > 1) walls.push({x, y: y-1, dir: 'h'});
@@ -1083,11 +1057,12 @@
                 const stack = [{x: startX, y: startY}];
                 visited[startY][startX] = true;
                 
+                // 深度优先搜索检查通路
                 while (stack.length > 0) {
                     const current = stack.pop();
                     
                     if (current.x === endX && current.y === endY) {
-                        return true;
+                        return true; // 有通路
                     }
                     
                     const directions = [
@@ -1110,9 +1085,11 @@
                 }
                 
                 // 如果没有通路，创建一条
+                console.log("创建从起点到终点的通路...");
                 let x = startX, y = startY;
                 
-                while (!(x === endX && y === endY)) {
+                // 先水平移动，再垂直移动
+                while (x !== endX || y !== endY) {
                     if (x < endX) {
                         x++;
                     } else if (x > endX) {
@@ -1227,8 +1204,9 @@
                 const exitX = exit.x * cellSize;
                 const exitY = exit.y * cellSize;
                 
+                // 检查出口坐标是否有效
                 if (exitX >= 0 && exitX < canvas.width && exitY >= 0 && exitY < canvas.height) {
-                    // 绘制出口背景发光效果
+                    // 绘制出口发光效果
                     ctx.shadowColor = '#ff4444';
                     ctx.shadowBlur = 15;
                     
@@ -1251,15 +1229,9 @@
                     ctx.textBaseline = 'middle';
                     ctx.fillText('出', exitX + cellSize / 2, exitY + cellSize / 2);
                     
-                    // 添加额外的出口标记（确保可见）
-                    ctx.fillStyle = '#ffff00';
-                    ctx.beginPath();
-                    ctx.arc(exitX + cellSize/2, exitY + cellSize/2, cellSize/3, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // 重新绘制文字
-                    ctx.fillStyle = '#ff0000';
-                    ctx.fillText('出', exitX + cellSize / 2, exitY + cellSize / 2);
+                    console.log(`出口绘制在: (${exit.x},${exit.y}) -> 像素(${exitX},${exitY})`);
+                } else {
+                    console.error(`出口坐标无效: (${exit.x},${exit.y}) -> 像素(${exitX},${exitY})`);
                 }
                 
                 // 绘制跳跳虎
