@@ -1,436 +1,1451 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>跳跳虎迷宫 - 献给康佳萍</title>
-<style>
-* {
-  margin:0; padding:0; box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC","Microsoft YaHei",sans-serif;
-}
-body {
-  background: linear-gradient(135deg, #a8e8f7 0%, #f0fdf4 100%);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  min-height:100vh; padding:10px; color:#333;
-}
-.title {
-  font-size:22px; font-weight:bold; color:#ff6b9d;
-  margin-bottom:6px; text-align:center;
-}
-.subtitle {
-  font-size:15px; color:#ff4444; margin-bottom:12px;
-}
-#canvas {
-  border:3px solid #6b8e23; border-radius:12px; background:#fefbe2;
-  display:block; box-shadow:0 6px 16px rgba(0,0,0,0.1);
-}
-.info {
-  width:100%; max-width:360px; display:flex; justify-content:space-between;
-  padding:8px 14px; background:rgba(255,255,255,0.9); border-radius:12px;
-  margin-top:10px; font-size:14px; font-weight:bold;
-}
-.final {
-  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  background:white; padding:35px 25px; border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2); text-align:center; z-index:999; display:none;
-}
-.final h2 { color:#ff6b9d; margin-bottom:10px; }
-.final p { font-size:15px; margin-bottom:18px; color:#333; line-height:1.5; }
-#restartAll { background:#ff6b9d; color:white; border:none; padding:10px 22px; border-radius:30px; font-size:15px; font-weight:bold; }
-
-.confetti {
-  position:fixed; top:0; left:0; width:100%; height:100%;
-  pointer-events:none; z-index:998;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>跳跳虎迷宫大冒险 - 送给康佳萍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c1a 0%, #121230 50%, #0a0a2a 100%);
+            color: #f0f8ff;
+            min-height: 100vh;
+            width: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        .header {
+            text-align: center;
+            margin: 15px 0;
+            width: 100%;
+            padding: 0 15px;
+        }
+        
+        h1 {
+            color: #FFD700;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(90deg, #FF8C00, #FFD700, #FF8C00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+        
+        h1:after {
+            content: "🐯";
+            position: absolute;
+            right: -30px;
+            top: 0;
+            font-size: 1.5rem;
+        }
+        
+        .subtitle {
+            color: #a3d9ff;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .dedication {
+            background: linear-gradient(90deg, #ff3366, #ff6699);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(255, 51, 102, 0.4);
+            text-align: center;
+            max-width: 300px;
+            margin: 0 auto 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            height: calc(100vh - 200px);
+            padding: 0 10px;
+        }
+        
+        .game-board {
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #4a4a8a;
+        }
+        
+        .maze-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(180deg, #1a1a3a 0%, #2a2a4a 100%);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        #maze-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(30, 30, 60, 0.9);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 2px solid #5a5aaa;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #a3d9ff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        .buttons-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .button {
+            flex: 1;
+            background: linear-gradient(to right, #FF8C00, #FFA500);
+            color: white;
+            border: none;
+            padding: 12px 5px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            -webkit-appearance: none;
+        }
+        
+        .button:active {
+            transform: scale(0.95);
+            box-shadow: 0 3px 10px rgba(255, 140, 0, 0.4);
+        }
+        
+        .button.secondary {
+            background: linear-gradient(to right, #6a5acd, #836fff);
+        }
+        
+        .button.restart {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+        
+        .direction-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(40, 40, 80, 0.7);
+            border-radius: 10px;
+            touch-action: manipulation;
+        }
+        
+        .direction-btn {
+            background: rgba(60, 60, 120, 0.9);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            font-size: 2rem;
+            color: #fff;
+            border: 2px solid #7b68ee;
+            cursor: pointer;
+            transition: all 0.1s;
+            -webkit-touch-callout: none;
+        }
+        
+        .direction-btn:active {
+            background: rgba(80, 80, 160, 0.9);
+            transform: scale(0.9);
+        }
+        
+        .direction-btn.up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .direction-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .direction-btn.down {
+            grid-column: 2;
+            grid-row: 2;
+        }
+        
+        .direction-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        
+        .instructions {
+            background: rgba(40, 40, 80, 0.7);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: #d0d0f0;
+        }
+        
+        .instructions ul {
+            padding-left: 15px;
+            margin-top: 8px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .creator {
+            margin-top: 15px;
+            text-align: center;
+            color: #a3d9ff;
+            font-size: 0.8rem;
+            padding: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .creator span {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 15px;
+            z-index: 1000;
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+            display: none;
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        
+        .message h3 {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .message p {
+            margin: 8px 0;
+            font-size: 1rem;
+        }
+        
+        .music-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .music-btn {
+            background: #4a4a8a;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            margin-top: 10px;
+            text-align: center;
+            color: #a3d9ff;
+            font-size: 0.7rem;
+            padding: 5px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        /* 苹果设备特定优化 */
+        @supports (-webkit-touch-callout: none) {
+            .direction-btn {
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .game-board {
+                -webkit-backdrop-filter: blur(10px);
+                backdrop-filter: blur(10px);
+            }
+        }
+        
+        /* 防止Safari工具栏遮挡 */
+        @media screen and (max-width: 768px) and (orientation: landscape) {
+            .game-container {
+                height: calc(100vh - 120px);
+            }
+        }
+        
+        /* 防止iPhone X+ 刘海遮挡 */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(10px, env(safe-area-inset-left));
+                padding-right: max(10px, env(safe-area-inset-right));
+                padding-top: max(10px, env(safe-area-inset-top));
+                padding-bottom: max(10px, env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* 鼓励语样式 */
+        .encouragement-text {
+            font-style: italic;
+            color: #a3d9ff;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .countdown {
+            font-size: 1.2rem;
+            color: #FFD700;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+    </style>
 </head>
-
 <body>
-<div class="confetti" id="confetti"></div>
-
-<div class="title">🐯 跳跳虎迷宫大冒险 🐯</div>
-<div class="subtitle">献给 · 康佳萍</div>
-
-<canvas id="canvas" width="360" height="360"></canvas>
-
-<div class="info">
-  <div>步数: <span id="step">0</span></div>
-  <div>关卡: <span id="level">1</span>/10</div>
-  <div>限时: <span id="time">90</span>s</div>
-</div>
-
-<div class="final" id="finalBox">
-  <h2>🎉 全部10关完美通关！🎉</h2>
-  <p>你太棒了！跳跳虎征服所有迷宫<br>这份勇敢，献给最优秀的康佳萍 ✨</p >
-  <button id="restartAll">重新挑战</button>
-</div>
-
-<script>
-const bgm = new Audio("https://cdn.pixabay.com/download/audio/2022/01/18/audio_1bcfd5419d.mp3");
-bgm.loop = true; bgm.volume = 0.25;
-
-const moveSound = new Audio("https://cdn.pixabay.com/download/audio/2021/08/03/audio_17c503ad04.mp3");
-moveSound.volume = 0.4;
-
-const winSound = new Audio("https://cdn.pixabay.com/download/audio/2022/09/12/audio_19d723a59d.mp3");
-winSound.volume = 0.6;
-
-const finalWinSound = new Audio("https://cdn.pixabay.com/download/audio/2022/08/23/audio_84b82207aa.mp3");
-finalWinSound.volume = 0.7;
-
-function playBGM() { bgm.play().catch(()=>{}); }
-function playMove() { moveSound.currentTime=0; moveSound.play().catch(()=>{}); }
-function playWin() { winSound.currentTime=0; winSound.play().catch(()=>{}); }
-function playFinalWin() { finalWinSound.currentTime=0; finalWinSound.play().catch(()=>{}); }
-
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const stepEl = document.getElementById('step');
-const levelEl = document.getElementById('level');
-const timeEl = document.getElementById('time');
-const finalBox = document.getElementById('finalBox');
-const restartAllBtn = document.getElementById('restartAll');
-const confetti = document.getElementById('confetti');
-
-const cell = 24;
-const size = 15;
-
-const levels = [
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
-[1,1,0,1,0,1,0,1,0,1,0,1,0,1,1],
-[1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
-[1,0,1,1,1,1,1,1,0,1,1,1,1,0,1],
-[1,0,0,0,0,0,0,1,0,0,0,0,1,0,1],
-[1,1,1,1,0,1,0,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,1,0,0,0,0,1,0,0,0,1],
-[1,0,1,1,1,1,1,1,1,0,1,1,1,0,1],
-[1,0,1,0,0,0,0,0,1,0,0,0,1,0,1],
-[1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
-[1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-[1,1,1,0,1,0,1,1,1,0,1,0,1,1,1],
-[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,1,0,0,0,1,0,0,1,0,0,0,0,1],
-[1,0,1,1,1,0,1,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,1,0,1],
-[1,1,1,0,1,1,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,1,0,0,0,0,0,0,0,1,0,1],
-[1,0,1,1,1,1,1,1,1,1,1,1,1,0,1],
-[1,0,1,0,0,0,0,0,0,0,0,0,0,0,1],
-[1,0,1,0,1,1,1,1,1,1,1,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,0,0,1,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,0,1,1],
-[1,0,1,0,1,0,0,0,0,1,0,0,0,0,1],
-[1,0,1,0,1,1,1,1,0,1,1,1,1,0,1],
-[1,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,0,1,0,1,0,0,0,1,0,1,0,0,1],
-[1,1,0,1,0,1,1,1,0,1,0,1,0,1,1],
-[1,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,1,1,1,0,1,1,1,1,1,1,0,1],
-[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,0,1,1,0,1,0,1,1,1,0,1,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,1,0,1],
-[1,0,1,0,1,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,0,1,1,0,1,0,1,1,1,0,1,1],
-[1,0,1,0,0,1,0,0,0,1,0,1,0,0,1],
-[1,0,1,1,0,1,0,1,1,1,0,1,0,1,1],
-[1,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,0,1,1,0,1,0,1,1,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,1,1,1,0,1,1,1,1,1,0,1,1],
-[1,0,1,0,0,0,0,1,0,0,0,0,0,0,1],
-[1,0,1,0,1,1,1,1,0,1,1,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,1,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,0,1,1],
-[1,0,1,0,1,0,0,0,0,0,0,1,0,0,1],
-[1,0,1,0,1,1,1,1,1,1,0,1,1,0,1],
-[1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,1,0,0,1,0,0,0,1,0,0,0,0,1],
-[1,0,1,0,1,1,0,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,1,1,0,1,1,1,1,1,1,0,1,1],
-[1,0,0,0,0,0,1,0,0,0,0,1,0,0,1],
-[1,1,1,1,1,0,1,0,1,1,0,1,0,1,1],
-[1,0,0,0,1,0,0,0,1,0,0,1,0,0,1],
-[1,0,1,0,1,1,1,1,1,0,1,1,1,0,1],
-[1,0,1,0,0,0,0,0,1,0,0,0,0,0,1],
-[1,0,1,1,1,1,1,0,1,1,1,1,1,0,1],
-[1,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
-[1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,0,1,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,0,1,0,1,0,1,0,0,0,1,0,0,1],
-[1,1,0,1,0,1,0,1,0,1,0,1,0,1,1],
-[1,0,0,1,0,0,0,1,0,1,0,0,0,0,1],
-[1,0,1,1,1,1,0,1,0,1,0,1,1,0,1],
-[1,0,1,0,0,0,0,0,0,1,0,0,1,0,1],
-[1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-[1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
-[1,0,1,0,1,0,0,0,1,0,0,0,1,0,1],
-[1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
-[1,0,1,0,0,1,0,0,0,1,0,0,0,0,1],
-[1,0,1,1,0,1,0,1,0,1,0,1,1,0,1],
-[1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,1,0,0,0,1,0,0,1,0,1,0,0,1],
-[1,0,1,1,1,0,1,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,1,0,1],
-[1,1,1,0,1,1,1,1,0,1,1,0,1,0,1],
-[1,0,0,0,1,0,0,1,0,0,0,0,1,0,1],
-[1,0,1,1,1,1,0,1,1,1,1,1,1,0,1],
-[1,0,1,0,0,0,0,0,0,1,0,0,0,0,1],
-[1,0,1,0,1,1,1,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,1,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,1,0,1],
-[1,0,1,0,1,0,0,0,0,0,0,0,1,0,1],
-[1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,0,1,0,0,0,1,0,1,0,0,0,0,1],
-[1,1,0,1,0,1,1,1,0,1,1,1,1,0,1],
-[1,0,0,0,0,1,0,0,0,0,0,1,0,0,1],
-[1,0,1,1,1,1,0,1,1,1,0,1,0,1,1],
-[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,0,1,1,1,1,0,1,1,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,1,0,1],
-[1,0,1,0,1,0,0,0,0,0,0,1,0,0,1],
-[1,0,1,0,1,1,1,1,1,1,0,1,0,1,1],
-[1,0,1,0,0,0,0,0,0,1,0,0,0,0,1],
-[1,0,1,1,0,1,1,1,0,1,0,1,1,0,1],
-[1,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,1,0,0,1,0,0,0,1,0,1,0,0,1],
-[1,0,1,0,1,1,0,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,1,0,0,0,1,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,1,1,0,1,1],
-[1,0,0,0,1,0,0,0,0,0,0,1,0,0,1],
-[1,0,1,1,1,1,1,1,1,1,0,1,0,1,1],
-[1,0,1,0,0,0,0,0,0,1,0,0,0,0,1],
-[1,0,1,0,1,1,1,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,1,0,1],
-[1,1,1,0,1,0,1,1,1,1,0,1,1,0,1],
-[1,0,1,0,1,0,0,0,0,0,0,0,1,0,1],
-[1,0,1,0,1,1,1,1,1,1,1,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-],
-[
-[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-[1,0,0,1,0,1,0,1,0,1,0,1,0,0,1],
-[1,1,0,1,0,1,0,1,0,1,0,1,0,1,1],
-[1,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
-[1,0,1,1,1,1,0,1,1,1,0,1,1,0,1],
-[1,0,1,0,0,0,0,0,0,1,0,0,1,0,1],
-[1,0,1,0,1,1,1,1,0,1,0,1,1,0,1],
-[1,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-[1,1,1,0,1,0,1,1,1,1,1,0,1,0,1],
-[1,0,1,0,1,0,0,0,0,0,1,0,0,0,1],
-[1,0,1,0,1,1,1,1,1,0,1,1,1,0,1],
-[1,0,1,0,0,1,0,0,0,0,0,1,0,0,1],
-[1,0,1,1,0,1,0,1,1,1,0,1,0,1,1],
-[1,0,0,0,0,1,0,0,0,1,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1,1,1,1,0,1]
-]
-];
-
-const levelTimes = [90,85,80,75,70,65,60,55,50,45];
-let currentLevel = 0;
-let px=1, py=1;
-const ex=13, ey=13;
-let step=0, time, timer;
-
-let tsx,tsy;
-document.addEventListener('touchstart',e=>{tsx=e.touches[0].clientX;tsy=e.touches[0].clientY});
-document.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-tsx;
-  const dy=e.changedTouches[0].clientY-tsy;
-  let nx=px,ny=py;
-  if(Math.abs(dx)>Math.abs(dy)){ dx>20?nx++:dx<-20&&nx--; }
-  else{ dy>20?ny++:dy<-20&&ny--; }
-  move(nx,ny);
-});
-
-document.addEventListener('keydown',e=>{
-  let nx=px,ny=py;
-  switch(e.key){
-    case 'ArrowUp':ny--;break; case 'ArrowDown':ny++;break;
-    case 'ArrowLeft':nx--;break; case 'ArrowRight':nx++;break; default:return;
-  }
-  move(nx,ny);
-});
-
-function move(nx,ny){
-  if(levels[currentLevel][ny][nx]===0){
-    px=nx; py=ny; step++; stepEl.textContent=step;
-    playMove();
-    checkWin();
-    draw();
-  }
-}
-
-function checkWin(){
-  if(px===ex&&py===ey){
-    clearInterval(timer);
-    playWin();
-    if(currentLevel<9){
-      currentLevel++;
-      nextLevel();
-    }else{
-      playFinalWin();
-      showConfetti();
-      finalBox.style.display='block';
-    }
-  }
-}
-
-function nextLevel(){
-  px=1; py=1; step=0;
-  time=levelTimes[currentLevel];
-  stepEl.textContent=0;
-  levelEl.textContent=currentLevel+1;
-  timeEl.textContent=time;
-  startTimer();
-  draw();
-}
-
-// ===================== 超萌迪士尼动漫跳跳虎 · 最终优化版 =====================
-function drawTiger(x, y) {
-  const cx = x * cell + 12;
-  const cy = y * cell + 12;
-
-  // 耳朵（橘色+黑色边）
-  ctx.fillStyle = "#ff9800";
-  ctx.beginPath(); ctx.ellipse(cx-7, cy-9, 5, 7, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(cx+7, cy-9, 5, 7, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = "#222";
-  ctx.beginPath(); ctx.arc(cx-7, cy-9, 2.5, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx+7, cy-9, 2.5, 0, Math.PI*2); ctx.fill();
-
-  // 头部
-  ctx.fillStyle = "#ff9800";
-  ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI*2); ctx.fill();
-
-  // 虎纹（标志性！）
-  ctx.fillStyle = "#222";
-  ctx.fillRect(cx-3, cy-8, 6, 2);
-  ctx.fillRect(cx-7, cy-5, 3, 2);
-  ctx.fillRect(cx+4, cy-5, 3, 2);
-
-  // 大眼睛
-  ctx.fillStyle = "#fff";
-  ctx.beginPath(); ctx.ellipse(cx-4, cy-1, 3, 3.5, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(cx+4, cy-1, 3, 3.5, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = "#000";
-  ctx.beginPath(); ctx.arc(cx-4, cy-1, 1.8, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx+4, cy-1, 1.8, 0, Math.PI*2); ctx.fill();
-
-  // 小鼻子
-  ctx.fillStyle = "#000";
-  ctx.beginPath(); ctx.arc(cx, cy+2, 1.2, 0, Math.PI*2); ctx.fill();
-
-  // 胡须
-  ctx.strokeStyle = "#333";
-  ctx.lineWidth = 0.8;
-  ctx.beginPath(); ctx.moveTo(cx-6,cy+2); ctx.lineTo(cx-2,cy+1); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx-6,cy+3); ctx.lineTo(cx-2,cy+3); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx+6,cy+2); ctx.lineTo(cx+2,cy+1); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx+6,cy+3); ctx.lineTo(cx+2,cy+3); ctx.stroke();
-}
-
-function draw(){
-  ctx.clearRect(0,0,360,360);
-  const m=levels[currentLevel];
-  for(let y=0;y<size;y++){
-    for(let x=0;x<size;x++){
-      ctx.fillStyle=m[y][x]?'#6b8e23':'#fefbe2';
-      ctx.fillRect(x*cell,y*cell,cell,cell);
-      ctx.strokeStyle='#556b2f'; ctx.lineWidth=1;
-      ctx.strokeRect(x*cell,y*cell,cell,cell);
-    }
-  }
-
-  ctx.fillStyle='#ff69b4';
-  ctx.beginPath(); ctx.arc(ex*cell+12, ey*cell+12, 7, 0, Math.PI*2); ctx.fill();
-
-  drawTiger(px, py);
-}
-
-function startTimer(){
-  clearInterval(timer);
-  timer=setInterval(()=>{
-    time--; timeEl.textContent=time;
-    if(time<=0){alert('时间到，重新挑战');nextLevel()}
-  },1000);
-}
-
-function showConfetti(){
-  const colors=['#ff6b9d','#ff9800','#4fc3f7','#81c784','#ffd54f'];
-  confetti.innerHTML='';
-  for(let i=0;i<150;i++){
-    const c=document.createElement('div');
-    c.style.position='absolute';
-    c.style.width='6px'; c.style.height='3px';
-    c.style.background=colors[Math.floor(Math.random()*colors.length)];
-    c.style.left=Math.random()*100+'%';
-    c.style.top='-10px';
-    c.style.animation=`fall ${2.2+Math.random()*2}s linear forwards`;
-    c.style.opacity=0.9;
-    confetti.appendChild(c);
-  }
-  setTimeout(()=>confetti.innerHTML='',5000);
-}
-
-let style=document.createElement('style');
-style.innerHTML=`@keyframes fall{100%{top:100%;transform:rotate(600deg);}}`;
-document.head.appendChild(style);
-
-function fullReset(){
-  currentLevel=0;
-  finalBox.style.display='none';
-  confetti.innerHTML='';
-  nextLevel();
-}
-
-restartAllBtn.onclick=fullReset;
-document.addEventListener('touchstart',playBGM,{once:true});
-fullReset();
-</script>
+    <div class="header">
+        <h1>跳跳虎迷宫大冒险</h1>
+        <p class="subtitle">挑战高难度迷宫！10个逐渐增加的关卡</p>
+        <div class="dedication">🎁 特别送给：<span>康佳萍</span> 🎁</div>
+    </div>
+    
+    <div class="game-container">
+        <div class="game-board">
+            <div class="maze-container">
+                <canvas id="maze-canvas"></canvas>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-label">关卡</div>
+                    <div class="stat-value" id="current-level">1/10</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">步数</div>
+                    <div class="stat-value" id="move-count">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">用时</div>
+                    <div class="stat-value" id="time-counter">00:00</div>
+                </div>
+            </div>
+            
+            <div class="buttons-row">
+                <button class="button" id="start-btn">▶ 开始</button>
+                <button class="button secondary" id="next-level-btn" disabled>⏭ 下一关</button>
+                <button class="button restart" id="restart-btn">🔄 重玩</button>
+            </div>
+            
+            <div class="direction-controls">
+                <div class="direction-btn up" data-direction="up">↑</div>
+                <div class="direction-btn left" data-direction="left">←</div>
+                <div class="direction-btn down" data-direction="down">↓</div>
+                <div class="direction-btn right" data-direction="right">→</div>
+            </div>
+            
+            <div class="instructions">
+                <p>使用方向按钮控制跳跳虎移动，从起点到达终点。收集星星可减少步数。</p>
+                <div class="music-controls">
+                    <button class="music-btn" id="music-toggle">🔊</button>
+                    <span>背景音乐</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="creator">
+        <p>本游戏是特别为 <span>康佳萍</span> 定制的高难度迷宫冒险游戏！🐯</p>
+    </div>
+    
+    <div class="message" id="level-complete">
+        <h3>🎉 关卡完成！</h3>
+        <p>通过了第 <span id="completed-level">1</span> 关！</p>
+        <p>用时: <span id="completed-time">00:00</span></p>
+        <p>步数: <span id="completed-moves">0</span></p>
+        <div class="encouragement-text" id="encouragement-text">康佳萍，你太棒了！</div>
+        <div class="countdown" id="countdown">3秒后自动进入下一关</div>
+        <button class="button" id="continue-btn" style="margin-top: 10px;">立即进入下一关</button>
+    </div>
+    
+    <div class="message" id="game-complete">
+        <h3>🎉 游戏通关！</h3>
+        <p>完成了所有10个高难度关卡！</p>
+        <p>总用时: <span id="total-time">00:00</span></p>
+        <p>总步数: <span id="total-moves">0</span></p>
+        <div class="encouragement-text">康佳萍，你真是个迷宫大师！太厉害了！🐯</div>
+        <button class="button" id="play-again-btn" style="margin-top: 15px;">再玩一次</button>
+    </div>
+    
+    <div class="footer">
+        <p>跳跳虎迷宫大冒险 - 为康佳萍制作 | 高难度版</p>
+    </div>
+    
+    <audio id="background-music" loop preload="auto">
+        <source src="tiger.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+    
+    <script>
+        // 游戏变量
+        let canvas, ctx;
+        let mazeWidth, mazeHeight;
+        let cellSize = 20;
+        let maze = [];
+        let player = { x: 1, y: 1 };
+        let exit = { x: 1, y: 1 };
+        let currentLevel = 1;
+        let moveCount = 0;
+        let startTime = 0;
+        let gameTime = 0;
+        let gameInterval;
+        let gameActive = false;
+        let musicEnabled = true;
+        let stars = [];
+        let collectedStars = 0;
+        let totalMoves = 0;
+        let totalTime = 0;
+        let animationId = null;
+        let countdownTimer = null;
+        let countdownSeconds = 3;
+        
+        // 鼓励语数组
+        const encouragements = [
+            "康佳萍，你太棒了！继续保持这个节奏！",
+            "康佳萍，你真是迷宫小能手！太聪明了！",
+            "康佳萍，你的智慧令人惊叹！继续前进！",
+            "康佳萍，你越来越熟练了！为你骄傲！",
+            "康佳萍，这迷宫对你来说小菜一碟！继续！",
+            "康佳萍，你真是个解谜天才！太厉害了！",
+            "康佳萍，你的耐心和智慧真让人佩服！",
+            "康佳萍，你正在成为迷宫大师的路上！",
+            "康佳萍，你的每一步都充满了智慧！",
+            "康佳萍，你真是个游戏高手！为你喝彩！"
+        ];
+        
+        // 高难度关卡配置 - 大幅增加墙壁数量
+        const levelConfigs = [
+            // 第1关：基础迷宫
+            { rows: 11, cols: 11, stars: 1, complexity: 0.45, algorithm: "dfs", extraWalls: 5 },
+            // 第2关：增加复杂度
+            { rows: 13, cols: 13, stars: 1, complexity: 0.55, algorithm: "dfs", extraWalls: 8 },
+            // 第3关：更复杂的迷宫
+            { rows: 15, cols: 15, stars: 2, complexity: 0.65, algorithm: "prim", extraWalls: 12 },
+            // 第4关：增加死胡同
+            { rows: 17, cols: 17, stars: 2, complexity: 0.70, algorithm: "prim", extraWalls: 15 },
+            // 第5关：迷宫加大
+            { rows: 19, cols: 19, stars: 3, complexity: 0.75, algorithm: "dfs", extraWalls: 18 },
+            // 第6关：高复杂度迷宫
+            { rows: 21, cols: 21, stars: 3, complexity: 0.80, algorithm: "prim", extraWalls: 22 },
+            // 第7关：挑战性迷宫
+            { rows: 23, cols: 23, stars: 4, complexity: 0.85, algorithm: "dfs", extraWalls: 25 },
+            // 第8关：非常复杂的迷宫
+            { rows: 25, cols: 25, stars: 4, complexity: 0.90, algorithm: "prim", extraWalls: 28 },
+            // 第9关：专家级迷宫
+            { rows: 27, cols: 27, stars: 5, complexity: 0.95, algorithm: "dfs", extraWalls: 32 },
+            // 第10关：终极迷宫挑战
+            { rows: 29, cols: 29, stars: 5, complexity: 0.98, algorithm: "prim", extraWalls: 35 }
+        ];
+        
+        // 初始化游戏
+        function initGame() {
+            canvas = document.getElementById('maze-canvas');
+            ctx = canvas.getContext('2d');
+            
+            // 设置画布大小
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 初始化第一关
+            loadLevel(currentLevel);
+            
+            // 设置事件监听器
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // 方向按钮事件 - 优化触控
+            document.querySelectorAll('.direction-btn').forEach(button => {
+                // 触摸事件
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const direction = this.getAttribute('data-direction');
+                    movePlayer(direction);
+                    this.style.transform = 'scale(0.9)';
+                });
+                
+                button.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(1)';
+                });
+                
+                button.addEventListener('touchcancel', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(1)';
+                });
+                
+                // 鼠标事件（桌面设备）
+                button.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    const direction = this.getAttribute('data-direction');
+                    movePlayer(direction);
+                    this.style.transform = 'scale(0.9)';
+                });
+                
+                button.addEventListener('mouseup', function() {
+                    this.style.transform = 'scale(1)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // 按钮事件
+            document.getElementById('start-btn').addEventListener('click', startGame);
+            document.getElementById('restart-btn').addEventListener('click', restartLevel);
+            document.getElementById('next-level-btn').addEventListener('click', nextLevel);
+            document.getElementById('continue-btn').addEventListener('click', function() {
+                clearCountdown();
+                nextLevel();
+            });
+            document.getElementById('play-again-btn').addEventListener('click', restartGame);
+            
+            // 音乐控制
+            const musicToggle = document.getElementById('music-toggle');
+            const backgroundMusic = document.getElementById('background-music');
+            
+            // 设置音乐音量
+            backgroundMusic.volume = 0.3;
+            
+            musicToggle.addEventListener('click', function() {
+                musicEnabled = !musicEnabled;
+                if (musicEnabled) {
+                    backgroundMusic.play().catch(e => {
+                        console.log("音乐播放被阻止，需要用户交互");
+                    });
+                    musicToggle.textContent = "🔊";
+                } else {
+                    backgroundMusic.pause();
+                    musicToggle.textContent = "🔇";
+                }
+            });
+            
+            // 初始绘制
+            drawMaze();
+        }
+        
+        // 清除倒计时
+        function clearCountdown() {
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+        }
+        
+        // 开始倒计时
+        function startCountdown() {
+            countdownSeconds = 3;
+            updateCountdownDisplay();
+            
+            // 清除之前的倒计时
+            clearCountdown();
+            
+            // 开始新的倒计时
+            countdownTimer = setInterval(() => {
+                countdownSeconds--;
+                updateCountdownDisplay();
+                
+                if (countdownSeconds <= 0) {
+                    clearCountdown();
+                    nextLevel();
+                }
+            }, 1000);
+        }
+        
+        // 更新倒计时显示
+        function updateCountdownDisplay() {
+            const countdownElement = document.getElementById('countdown');
+            if (countdownElement) {
+                countdownElement.textContent = `${countdownSeconds}秒后自动进入下一关`;
+            }
+        }
+        
+        // 调整画布大小
+        function resizeCanvas() {
+            const gameBoard = document.querySelector('.game-board');
+            if (!gameBoard) return;
+            
+            const size = Math.min(gameBoard.offsetWidth, gameBoard.offsetHeight) - 20;
+            
+            canvas.width = size;
+            canvas.height = size;
+            
+            // 根据画布大小调整单元格大小
+            const config = levelConfigs[currentLevel - 1];
+            cellSize = Math.min(
+                Math.floor(size / config.cols),
+                Math.floor(size / config.rows)
+            );
+            
+            if (cellSize < 10) cellSize = 10; // 最小单元格大小
+            
+            drawMaze();
+        }
+        
+        // 加载关卡
+        function loadLevel(level) {
+            currentLevel = Math.min(Math.max(level, 1), 10);
+            moveCount = 0;
+            collectedStars = 0;
+            
+            // 更新显示
+            document.getElementById('current-level').textContent = `${currentLevel}/10`;
+            document.getElementById('move-count').textContent = moveCount;
+            document.getElementById('time-counter').textContent = '00:00';
+            
+            // 根据关卡配置生成迷宫
+            const config = levelConfigs[currentLevel - 1];
+            generateMaze(config.rows, config.cols, config.complexity, config.algorithm, config.extraWalls);
+            
+            // 生成星星
+            generateStars(config.stars);
+            
+            // 绘制迷宫
+            drawMaze();
+            
+            // 禁用下一关按钮
+            document.getElementById('next-level-btn').disabled = true;
+        }
+        
+        // 生成迷宫 - 使用多种算法增加难度
+        function generateMaze(rows, cols, complexity, algorithm, extraWalls) {
+            mazeWidth = cols;
+            mazeHeight = rows;
+            
+            // 选择算法
+            if (algorithm === "prim") {
+                generatePrimMaze(rows, cols, complexity);
+            } else {
+                generateDFSMaze(rows, cols, complexity);
+            }
+            
+            // 添加额外墙壁增加难度
+            addExtraWalls(rows, cols, extraWalls);
+            
+            // 设置起点和终点
+            player.x = 1;
+            player.y = 1;
+            
+            // 确保终点位置合理且可见
+            do {
+                exit.x = Math.floor(Math.random() * (cols - 4)) + 2;
+                exit.y = Math.floor(Math.random() * (rows - 4)) + 2;
+            } while (exit.x === player.x && exit.y === player.y || 
+                    maze[exit.y][exit.x] === 1 ||
+                    (Math.abs(exit.x - player.x) + Math.abs(exit.y - player.y)) < Math.min(rows, cols) / 2);
+            
+            // 确保起点和终点是路
+            maze[player.y][player.x] = 0;
+            maze[exit.y][exit.x] = 0;
+            
+            // 确保终点周围至少有一条通路
+            ensureExitAccessible();
+            
+            // 确保有通路
+            ensurePath(player.x, player.y, exit.x, exit.y, rows, cols);
+        }
+        
+        // 深度优先搜索算法生成迷宫
+        function generateDFSMaze(rows, cols, complexity) {
+            // 初始化迷宫，全部为墙
+            maze = [];
+            for (let y = 0; y < rows; y++) {
+                maze[y] = [];
+                for (let x = 0; x < cols; x++) {
+                    maze[y][x] = 1; // 1表示墙
+                }
+            }
+            
+            // 起点
+            const stack = [{x: 1, y: 1}];
+            maze[1][1] = 0;
+            
+            while (stack.length > 0) {
+                const current = stack[stack.length - 1];
+                const neighbors = [];
+                
+                // 检查四个方向（距离为2的单元格）
+                const directions = [
+                    {dx: 0, dy: -2}, // 上
+                    {dx: 2, dy: 0},  // 右
+                    {dx: 0, dy: 2},  // 下
+                    {dx: -2, dy: 0}  // 左
+                ];
+                
+                for (const dir of directions) {
+                    const nx = current.x + dir.dx;
+                    const ny = current.y + dir.dy;
+                    
+                    if (nx > 0 && nx < cols-1 && ny > 0 && ny < rows-1 && maze[ny][nx] === 1) {
+                        neighbors.push({x: nx, y: ny, dir: dir});
+                    }
+                }
+                
+                if (neighbors.length > 0) {
+                    // 根据复杂度随机选择是否创建死胡同
+                    if (Math.random() < complexity) {
+                        // 创建分支（死胡同）
+                        const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                        const wallX = current.x + next.dir.dx / 2;
+                        const wallY = current.y + next.dir.dy / 2;
+                        
+                        maze[wallY][wallX] = 0;
+                        maze[next.y][next.x] = 0;
+                        stack.push(next);
+                    } else {
+                        // 随机选择一个邻居
+                        const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                        const wallX = current.x + next.dir.dx / 2;
+                        const wallY = current.y + next.dir.dy / 2;
+                        
+                        maze[wallY][wallX] = 0;
+                        maze[next.y][next.x] = 0;
+                        stack.push(next);
+                    }
+                } else {
+                    stack.pop();
+                }
+            }
+            
+            // 确保边界是墙
+            for (let x = 0; x < cols; x++) {
+                maze[0][x] = 1;
+                maze[rows-1][x] = 1;
+            }
+            for (let y = 0; y < rows; y++) {
+                maze[y][0] = 1;
+                maze[y][cols-1] = 1;
+            }
+        }
+        
+        // Prim算法生成迷宫
+        function generatePrimMaze(rows, cols, complexity) {
+            // 初始化迷宫，全部为墙
+            maze = [];
+            for (let y = 0; y < rows; y++) {
+                maze[y] = [];
+                for (let x = 0; x < cols; x++) {
+                    maze[y][x] = 1;
+                }
+            }
+            
+            // 起点
+            maze[1][1] = 0;
+            const walls = [];
+            
+            // 添加起点相邻的墙
+            addWalls(1, 1, walls, rows, cols);
+            
+            while (walls.length > 0) {
+                // 随机选择一堵墙
+                const randomIndex = Math.floor(Math.random() * walls.length);
+                const wall = walls[randomIndex];
+                
+                // 检查墙是否分隔两个未连接的单元格
+                if (wall.dir === 'h') {
+                    // 水平墙
+                    if (wall.y > 0 && wall.y < rows-1 && 
+                        ((maze[wall.y-1][wall.x] === 0 && maze[wall.y+1][wall.x] === 1) ||
+                         (maze[wall.y-1][wall.x] === 1 && maze[wall.y+1][wall.x] === 0))) {
+                        
+                        // 根据复杂度决定是否打通
+                        if (Math.random() < complexity) {
+                            maze[wall.y][wall.x] = 0;
+                            const newY = maze[wall.y-1][wall.x] === 0 ? wall.y+1 : wall.y-1;
+                            maze[newY][wall.x] = 0;
+                            addWalls(wall.x, newY, walls, rows, cols);
+                        }
+                    }
+                } else {
+                    // 垂直墙
+                    if (wall.x > 0 && wall.x < cols-1 &&
+                        ((maze[wall.y][wall.x-1] === 0 && maze[wall.y][wall.x+1] === 1) ||
+                         (maze[wall.y][wall.x-1] === 1 && maze[wall.y][wall.x+1] === 0))) {
+                        
+                        // 根据复杂度决定是否打通
+                        if (Math.random() < complexity) {
+                            maze[wall.y][wall.x] = 0;
+                            const newX = maze[wall.y][wall.x-1] === 0 ? wall.x+1 : wall.x-1;
+                            maze[wall.y][newX] = 0;
+                            addWalls(newX, wall.y, walls, rows, cols);
+                        }
+                    }
+                }
+                
+                walls.splice(randomIndex, 1);
+            }
+        }
+        
+        // 添加额外墙壁增加难度
+        function addExtraWalls(rows, cols, extraWalls) {
+            for (let i = 0; i < extraWalls; i++) {
+                let x, y;
+                let attempts = 0;
+                
+                // 随机选择位置，但不能在起点和终点附近
+                do {
+                    x = Math.floor(Math.random() * (cols - 2)) + 1;
+                    y = Math.floor(Math.random() * (rows - 2)) + 1;
+                    attempts++;
+                } while (attempts < 50 && (
+                    (x === player.x && y === player.y) || 
+                    (x === exit.x && y === exit.y) ||
+                    maze[y][x] === 1 ||
+                    isNearStartOrExit(x, y)
+                ));
+                
+                if (attempts < 50) {
+                    maze[y][x] = 1;
+                    
+                    // 随机添加相邻的墙壁
+                    if (Math.random() > 0.5 && x < cols-2) maze[y][x+1] = 1;
+                    if (Math.random() > 0.5 && y < rows-2) maze[y+1][x] = 1;
+                }
+            }
+        }
+        
+        // 检查是否靠近起点或终点
+        function isNearStartOrExit(x, y) {
+            return Math.abs(x - player.x) <= 2 && Math.abs(y - player.y) <= 2 ||
+                   Math.abs(x - exit.x) <= 2 && Math.abs(y - exit.y) <= 2;
+        }
+        
+        // 确保终点可达
+        function ensureExitAccessible() {
+            const directions = [
+                {dx: 0, dy: -1}, // 上
+                {dx: 1, dy: 0},  // 右
+                {dx: 0, dy: 1},  // 下
+                {dx: -1, dy: 0}  // 左
+            ];
+            
+            let accessible = false;
+            for (const dir of directions) {
+                const nx = exit.x + dir.dx;
+                const ny = exit.y + dir.dy;
+                if (nx >= 0 && nx < mazeWidth && ny >= 0 && ny < mazeHeight && maze[ny][nx] === 0) {
+                    accessible = true;
+                    break;
+                }
+            }
+            
+            // 如果终点不可达，打通一个方向
+            if (!accessible) {
+                const dir = directions[Math.floor(Math.random() * directions.length)];
+                const nx = exit.x + dir.dx;
+                const ny = exit.y + dir.dy;
+                if (nx >= 0 && nx < mazeWidth && ny >= 0 && ny < mazeHeight) {
+                    maze[ny][nx] = 0;
+                }
+            }
+        }
+        
+        // 添加墙到列表
+        function addWalls(x, y, walls, rows, cols) {
+            if (y > 1) walls.push({x, y: y-1, dir: 'h'});
+            if (y < rows-2) walls.push({x, y: y+1, dir: 'h'});
+            if (x > 1) walls.push({x: x-1, y, dir: 'v'});
+            if (x < cols-2) walls.push({x: x+1, y, dir: 'v'});
+        }
+        
+        // 确保有通路
+        function ensurePath(startX, startY, endX, endY, rows, cols) {
+            const visited = Array(rows).fill().map(() => Array(cols).fill(false));
+            const stack = [{x: startX, y: startY}];
+            visited[startY][startX] = true;
+            
+            // 深度优先搜索检查通路
+            while (stack.length > 0) {
+                const current = stack.pop();
+                
+                if (current.x === endX && current.y === endY) {
+                    return true; // 有通路
+                }
+                
+                const directions = [
+                    {dx: 0, dy: -1},
+                    {dx: 1, dy: 0},
+                    {dx: 0, dy: 1},
+                    {dx: -1, dy: 0}
+                ];
+                
+                for (const dir of directions) {
+                    const nx = current.x + dir.dx;
+                    const ny = current.y + dir.dy;
+                    
+                    if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && 
+                        maze[ny][nx] === 0 && !visited[ny][nx]) {
+                        visited[ny][nx] = true;
+                        stack.push({x: nx, y: ny});
+                    }
+                }
+            }
+            
+            // 如果没有通路，创建一条
+            let x = startX, y = startY;
+            
+            while (!(x === endX && y === endY)) {
+                if (x < endX) {
+                    x++;
+                } else if (x > endX) {
+                    x--;
+                } else if (y < endY) {
+                    y++;
+                } else if (y > endY) {
+                    y--;
+                }
+                
+                maze[y][x] = 0;
+                
+                // 确保路径宽度
+                if (x > 0) maze[y][x-1] = 0;
+                if (x < cols-1) maze[y][x+1] = 0;
+                if (y > 0) maze[y-1][x] = 0;
+                if (y < rows-1) maze[y+1][x] = 0;
+            }
+            
+            return true;
+        }
+        
+        // 生成星星
+        function generateStars(count) {
+            stars = [];
+            for (let i = 0; i < count; i++) {
+                let x, y;
+                let attempts = 0;
+                do {
+                    x = Math.floor(Math.random() * (mazeWidth - 4)) + 2;
+                    y = Math.floor(Math.random() * (mazeHeight - 4)) + 2;
+                    attempts++;
+                } while (attempts < 50 && (
+                    (x === player.x && y === player.y) || 
+                    (x === exit.x && y === exit.y) || 
+                    maze[y][x] === 1 || 
+                    stars.some(star => Math.abs(star.x - x) < 2 && Math.abs(star.y - y) < 2)
+                ));
+                
+                if (attempts < 50) {
+                    stars.push({x, y});
+                }
+            }
+        }
+        
+        // 绘制迷宫
+        function drawMaze() {
+            if (!canvas || !ctx) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景
+            ctx.fillStyle = '#1a1a3a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制墙壁
+            for (let y = 0; y < mazeHeight; y++) {
+                for (let x = 0; x < mazeWidth; x++) {
+                    if (maze[y][x] === 1) {
+                        // 墙壁渐变效果
+                        const gradient = ctx.createLinearGradient(
+                            x * cellSize, y * cellSize,
+                            (x + 1) * cellSize, (y + 1) * cellSize
+                        );
+                        gradient.addColorStop(0, '#4a4a8a');
+                        gradient.addColorStop(1, '#36366d');
+                        
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                        
+                        // 墙壁纹理
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                        for (let i = 0; i < 3; i++) {
+                            for (let j = 0; j < 3; j++) {
+                                if ((i + j) % 2 === 0) {
+                                    ctx.fillRect(
+                                        x * cellSize + i * cellSize/3,
+                                        y * cellSize + j * cellSize/3,
+                                        cellSize/3 - 1,
+                                        cellSize/3 - 1
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 绘制星星
+            stars.forEach(star => {
+                const x = star.x * cellSize + cellSize / 2;
+                const y = star.y * cellSize + cellSize / 2;
+                
+                // 星星发光效果
+                ctx.shadowColor = '#ffd700';
+                ctx.shadowBlur = 10;
+                
+                // 绘制旋转的星星
+                const time = Date.now() / 1000;
+                const rotation = time * 2;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(rotation);
+                
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                
+                // 绘制五角星
+                for (let i = 0; i < 10; i++) {
+                    const angle = (i * 2 * Math.PI) / 10;
+                    const radius = i % 2 === 0 ? cellSize/3 : cellSize/6;
+                    const starX = Math.cos(angle) * radius;
+                    const starY = Math.sin(angle) * radius;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(starX, starY);
+                    } else {
+                        ctx.lineTo(starX, starY);
+                    }
+                }
+                
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+                
+                ctx.shadowBlur = 0;
+            });
+            
+            // 绘制终点
+            const exitX = exit.x * cellSize;
+            const exitY = exit.y * cellSize;
+            
+            // 终点发光效果
+            ctx.shadowColor = '#ff4444';
+            ctx.shadowBlur = 15;
+            
+            // 绘制终点标志 - 确保可见
+            ctx.fillStyle = '#ff4444';
+            ctx.fillRect(exitX, exitY, cellSize, cellSize);
+            
+            // 终点边框
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(exitX + 2, exitY + 2, cellSize - 4, cellSize - 4);
+            
+            ctx.shadowBlur = 0;
+            
+            // 终点文字
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${Math.max(cellSize/2, 12)}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('出', exitX + cellSize / 2, exitY + cellSize / 2);
+            
+            // 绘制跳跳虎
+            drawTiger(player.x, player.y);
+            
+            // 绘制关卡信息
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(5, 5, 120, 40);
+            
+            ctx.fillStyle = '#FFD700';
+            ctx.font = `bold ${Math.max(cellSize/2, 12)}px Arial`;
+            ctx.textAlign = 'left';
+            ctx.fillText(`第${currentLevel}关`, 10, 20);
+            ctx.fillText(`步数:${moveCount}`, 10, 35);
+        }
+        
+        // 绘制跳跳虎
+        function drawTiger(x, y) {
+            const centerX = x * cellSize + cellSize / 2;
+            const centerY = y * cellSize + cellSize / 2;
+            const tigerSize = cellSize * 0.7;
+            
+            // 跳跳虎身体
+            ctx.fillStyle = '#FF8C00';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, tigerSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 条纹
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(centerX - tigerSize/2, centerY - tigerSize/4, tigerSize, tigerSize/8);
+            
+            // 耳朵
+            ctx.fillStyle = '#FF8C00';
+            ctx.beginPath();
+            ctx.arc(centerX - tigerSize/3, centerY - tigerSize/2, tigerSize/5, 0, Math.PI * 2);
+            ctx.arc(centerX + tigerSize/3, centerY - tigerSize/2, tigerSize/5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 眼睛
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(centerX - tigerSize/4, centerY - tigerSize/6, tigerSize/6, 0, Math.PI * 2);
+            ctx.arc(centerX + tigerSize/4, centerY - tigerSize/6, tigerSize/6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(centerX - tigerSize/4, centerY - tigerSize/6, tigerSize/10, 0, Math.PI * 2);
+            ctx.arc(centerX + tigerSize/4, centerY - tigerSize/6, tigerSize/10, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 鼻子和嘴巴
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, tigerSize/8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY + tigerSize/8, tigerSize/8, 0, Math.PI);
+            ctx.stroke();
+            
+            // 跳跃动画效果
+            if (gameActive) {
+                const jumpHeight = Math.sin(Date.now() / 200) * 2;
+                ctx.shadowColor = '#FF8C00';
+                ctx.shadowBlur = 8;
+                ctx.shadowOffsetY = -jumpHeight;
+                
+                // 重新绘制身体以添加阴影效果
+                ctx.fillStyle = '#FF8C00';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, tigerSize / 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+            }
+        }
+        
+        // 开始游戏
+        function startGame() {
+            if (gameActive) return;
+            
+            gameActive = true;
+            startTime = Date.now();
+            document.getElementById('start-btn').disabled = true;
+            
+            // 开始计时
+            gameInterval = setInterval(updateTimer, 1000);
+            
+            // 绘制跳跳虎动画
+            animateTiger();
+            
+            // 尝试播放背景音乐
+            if (musicEnabled) {
+                const backgroundMusic = document.getElementById('background-music');
+                backgroundMusic.play().catch(e => {
+                    console.log("自动播放被阻止，需要用户交互");
+                });
+            }
+        }
+        
+        // 更新计时器
+        function updateTimer() {
+            if (!gameActive) return;
+            
+            const now = Date.now();
+            gameTime = Math.floor((now - startTime) / 1000);
+            
+            const minutes = Math.floor(gameTime / 60).toString().padStart(2, '0');
+            const seconds = (gameTime % 60).toString().padStart(2, '0');
+            
+            document.getElementById('time-counter').textContent = `${minutes}:${seconds}`;
+        }
+        
+        // 跳跳虎动画
+        function animateTiger() {
+            if (!gameActive) {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                return;
+            }
+            
+            drawMaze();
+            animationId = requestAnimationFrame(animateTiger);
+        }
+        
+        // 处理按键
+        function handleKeyPress(e) {
+            if (!gameActive) return;
+            
+            let direction = null;
+            switch(e.key) {
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    direction = 'up';
+                    break;
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    direction = 'down';
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    direction = 'left';
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    direction = 'right';
+                    break;
+            }
+            
+            if (direction) {
+                movePlayer(direction);
+                e.preventDefault();
+            }
+        }
+        
+        // 移动玩家
+        function movePlayer(direction) {
+            if (!gameActive) return;
+            
+            let newX = player.x;
+            let newY = player.y;
+            
+            switch(direction) {
+                case 'up': newY--; break;
+                case 'down': newY++; break;
+                case 'left': newX--; break;
+                case 'right': newX++; break;
+            }
+            
+            // 检查是否碰到墙
+            if (newX < 0 || newX >= mazeWidth || newY < 0 || newY >= mazeHeight || maze[newY][newX] === 1) {
+                return; // 不能移动
+            }
+            
+            // 移动玩家
+            player.x = newX;
+            player.y = newY;
+            moveCount++;
+            document.getElementById('move-count').textContent = moveCount;
+            
+            // 检查是否收集到星星
+            for (let i = stars.length - 1; i >= 0; i--) {
+                if (stars[i].x === player.x && stars[i].y === player.y) {
+                    stars.splice(i, 1);
+                    collectedStars++;
+                }
+            }
+            
+            // 检查是否到达终点
+            if (player.x === exit.x && player.y === exit.y) {
+                completeLevel();
+            }
+        }
+        
+        // 完成关卡
+        function completeLevel() {
+            gameActive = false;
+            clearInterval(gameInterval);
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            // 更新总数据
+            totalMoves += moveCount;
+            totalTime += gameTime;
+            
+            // 显示完成消息
+            document.getElementById('completed-level').textContent = currentLevel;
+            document.getElementById('completed-moves').textContent = moveCount;
+            
+            const minutes = Math.floor(gameTime / 60).toString().padStart(2, '0');
+            const seconds = (gameTime % 60).toString().padStart(2, '0');
+            document.getElementById('completed-time').textContent = `${minutes}:${seconds}`;
+            
+            // 随机选择鼓励语
+            const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
+            document.getElementById('encouragement-text').textContent = randomEncouragement;
+            
+            // 如果是最后一关
+            if (currentLevel >= 10) {
+                completeGame();
+            } else {
+                document.getElementById('level-complete').style.display = 'block';
+                // 开始3秒倒计时
+                startCountdown();
+            }
+            
+            // 最终绘制一次
+            drawMaze();
+        }
+        
+        // 完成游戏
+        function completeGame() {
+            const totalMinutes = Math.floor(totalTime / 60).toString().padStart(2, '0');
+            const totalSeconds = (totalTime % 60).toString().padStart(2, '0');
+            
+            document.getElementById('total-time').textContent = `${totalMinutes}:${totalSeconds}`;
+            document.getElementById('total-moves').textContent = totalMoves;
+            document.getElementById('game-complete').style.display = 'block';
+            
+            // 清除倒计时
+            clearCountdown();
+        }
+        
+        // 下一关
+        function nextLevel() {
+            // 隐藏关卡完成消息
+            document.getElementById('level-complete').style.display = 'none';
+            
+            if (currentLevel < 10) {
+                currentLevel++;
+                loadLevel(currentLevel);
+                document.getElementById('next-level-btn').disabled = true;
+                document.getElementById('start-btn').disabled = false;
+            } else {
+                completeGame();
+            }
+        }
+        
+        // 重新开始关卡
+        function restartLevel() {
+            loadLevel(currentLevel);
+            gameActive = false;
+            clearInterval(gameInterval);
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            document.getElementById('start-btn').disabled = false;
+            
+            // 清除倒计时
+            clearCountdown();
+            
+            // 隐藏任何显示的消息
+            document.getElementById('level-complete').style.display = 'none';
+        }
+        
+        // 重新开始游戏
+        function restartGame() {
+            currentLevel = 1;
+            totalMoves = 0;
+            totalTime = 0;
+            loadLevel(currentLevel);
+            gameActive = false;
+            clearInterval(gameInterval);
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('game-complete').style.display = 'none';
+            
+            // 清除倒计时
+            clearCountdown();
+        }
+        
+        // 初始化游戏
+        window.addEventListener('load', initGame);
+    </script>
 </body>
 </html>
