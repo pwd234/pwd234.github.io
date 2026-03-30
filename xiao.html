@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🐯跳跳虎消消乐 - 康佳萍专属🐯</title>
+<title>🐯跳跳虎消消乐 - 康佳萍专属版🐯</title>
 <style>
 *{
     margin:0;
@@ -14,7 +14,7 @@
     font-family:"PingFang SC","Microsoft YaHei",sans-serif;
 }
 body{
-    background:#fdd6e0;
+    background:linear-gradient(180deg,#FFE6F0,#FFD6E7);
     display:flex;
     justify-content:center;
     align-items:center;
@@ -24,162 +24,239 @@ body{
 .main{
     width:100%;
     max-width:400px;
-    background:#fff;
-    border-radius:20px;
-    padding:15px;
-    box-shadow:0 0 30px rgba(255,100,150,0.2);
+    background:#FFFFFF;
+    border-radius:24px;
+    padding:18px;
+    box-shadow:0 8px 30px rgba(255,120,160,0.25);
     position:relative;
 }
 .title{
     text-align:center;
-    font-size:22px;
+    font-size:23px;
     font-weight:bold;
-    color:#ff4a8e;
+    color:#FF4A8E;
     margin-bottom:10px;
+    line-height:1.4;
 }
 .name{
-    color:#ff2a6d;
-    font-size:24px;
+    color:#FF2A6D;
+    font-size:26px;
 }
-.score-box{
-    text-align:center;
-    font-size:17px;
-    color:#ff5789;
-    margin-bottom:10px;
+.info-bar{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 14px;
+    background:#FFF5F9;
+    border-radius:14px;
+    font-size:16px;
     font-weight:bold;
+    color:#FF5789;
+    margin-bottom:12px;
 }
 .game-area{
     width:100%;
     aspect-ratio:1/1;
-    background:#ffe6ef;
-    border-radius:16px;
+    background:#FFEEF5;
+    border-radius:18px;
     position:relative;
     overflow:hidden;
+    border:2px solid #FFD6E7;
 }
 .card{
     position:absolute;
-    width:50px;
-    height:50px;
-    background:#ffffff;
+    width:52px;
+    height:52px;
+    background:#FFFFFF;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.12);
+    cursor:pointer;
+    transition:all 0.25s ease;
+    border:2px solid #FFC1D6;
+}
+.card:hover{
+    transform:scale(1.06);
+    border-color:#FF99BB;
+}
+.card.disabled{
+    opacity:0.45;
+    pointer-events:none;
+    background:#F6F6F6;
+}
+.card.taken{
+    opacity:0;
+    transform:scale(0.8);
+    pointer-events:none;
+}
+.slot-area{
+    height:74px;
+    background:#FFF5F9;
+    border-radius:14px;
+    margin-top:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    padding:0 12px;
+    border:2px dashed #FFC1D6;
+}
+.slot{
+    width:52px;
+    height:52px;
+    background:#fff;
+    border:2px solid #FFC1D6;
     border-radius:10px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:28px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.15);
-    cursor:pointer;
-    transition:transform 0.2s;
-    border:2px solid #ffc1d6;
 }
-.card.disabled{
-    opacity:0.4;
-    pointer-events:none;
-}
-.card.taken{
-    opacity:0;
-    pointer-events:none;
-}
-.slot-area{
-    height:70px;
-    background:#fff5f9;
-    border-radius:12px;
-    margin-top:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    padding:0 10px;
-}
-.slot{
-    width:50px;
-    height:50px;
-    background:#fff;
-    border:2px dashed #ff99bb;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:26px;
-}
+
+/* 弹窗 */
 .modal{
     position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(255,255,255,0.95);
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(255,255,255,0.96);
     z-index:999;
     display:none;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    color:#ff337a;
+    color:#FF337A;
     font-weight:bold;
 }
 .modal h2{
-    font-size:32px;
+    font-size:34px;
     margin-bottom:10px;
 }
 .modal p{
-    font-size:18px;
+    font-size:19px;
     margin-bottom:20px;
 }
 .modal button{
-    padding:12px 30px;
-    background:#ff4a8e;
+    padding:12px 32px;
+    background:#FF4A8E;
     color:#fff;
     border:none;
     border-radius:30px;
     font-size:18px;
     font-weight:bold;
+    box-shadow:0 4px 12px rgba(255,74,142,0.3);
+}
+
+/* 鼓励弹窗 */
+.cheer-modal{
+    position:fixed;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    background:#fff;
+    padding:25px 30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(255,120,160,0.3);
+    z-index:998;
+    text-align:center;
+    display:none;
+}
+.cheer-title{
+    font-size:22px;
+    color:#FF4A8E;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+.cheer-text{
+    font-size:17px;
+    color:#FF2A6D;
+    margin-bottom:15px;
+}
+.cheer-close{
+    padding:8px 20px;
+    background:#FF4A8E;
+    color:#fff;
+    border:none;
+    border-radius:20px;
+    font-size:15px;
 }
 </style>
 </head>
 <body>
 
 <div class="main">
-    <div class="title">🐯 跳跳虎消消乐 🐯<br>献给 <span class="name">康佳萍</span></div>
-    <div class="score-box">剩余卡片：<span id="left">0</span></div>
-    <div class="game-area" id="game"></div>
-    <div class="slot-area" id="slot"></div>
+    <div class="title">🐯 跳跳虎消消乐 🐯<br>献给最棒的 <span class="name">康佳萍</span></div>
+    <div class="info-bar">
+        <div>剩余：<span id="left">0</span></div>
+        <div>得分：<span id="score">0</span></div>
+    </div>
+    <div class="game-area" id="gameArea"></div>
+    <div class="slot-area" id="slotArea"></div>
 </div>
 
+<!-- 鼓励弹窗 -->
+<div class="cheer-modal" id="cheerModal">
+    <div class="cheer-title">🎉 太棒啦 🎉</div>
+    <div class="cheer-text" id="cheerText"></div>
+    <button class="cheer-close" onclick="closeCheer()">继续加油</button>
+</div>
+
+<!-- 失败 -->
 <div class="modal" id="failModal">
     <h2>游戏结束</h2>
-    <p>康佳萍加油，再来一次！</p >
+    <p>康佳萍没关系，再来一次超厉害！</p >
     <button onclick="start()">重新开始</button>
 </div>
 
+<!-- 胜利 -->
 <div class="modal" id="winModal">
-    <h2>🎉恭喜通关🎉</h2>
-    <p>康佳萍太棒啦！</p >
+    <h2>🎉 完美通关 🎉</h2>
+    <p>康佳萍你真的太优秀啦！</p >
     <button onclick="start()">再来一局</button>
 </div>
 
 <audio id="bgm" loop>
-<audio id="takeSnd">
-<audio id="clearSnd">
+<audio id="takeAudio">
+<audio id="clearAudio">
 
 <script>
-const gameEl = document.getElementById('game');
-const slotEl = document.getElementById('slot');
+const gameArea = document.getElementById('gameArea');
+const slotArea = document.getElementById('slotArea');
 const leftNum = document.getElementById('left');
+const scoreNum = document.getElementById('score');
 const failModal = document.getElementById('failModal');
 const winModal = document.getElementById('winModal');
+const cheerModal = document.getElementById('cheerModal');
+const cheerText = document.getElementById('cheerText');
 
 const bgm = document.getElementById('bgm');
-const takeSnd = document.getElementById('takeSnd');
-const clearSnd = document.getElementById('clearSnd');
+const takeAudio = document.getElementById('takeAudio');
+const clearAudio = document.getElementById('clearAudio');
 
 bgm.src = 'tiger.mp3';
-takeSnd.src = 'take.mp3';
-clearSnd.src = 'clear.mp3';
+takeAudio.src = 'take.mp3';
+clearAudio.src = 'clear.mp3';
 
-const icons = ['🐯','🐯','🐯','🍯','❤️','🌈','🐻','🥕'];
+// 图案：跳跳虎最多
+const icons = ['🐯','🐯','🐯','🐯','🍯','❤️','🌈','🐻','🥕'];
 const layers = 3;
-const total = 90;
+const totalCards = 90;
+const maxSlot = 7;
 
 let cards = [];
 let slot = [];
-const maxSlot = 7;
+let score = 0;
+let clearCount = 0; // 成功消除次数
+
+// 鼓励语库（每5次弹出一句）
+const cheerTexts = [
+    "康佳萍真棒！继续加油～",
+    "康佳萍太厉害了，越来越顺手！",
+    "康佳萍超优秀，保持状态！",
+    "太棒啦！康佳萍简直是天才～",
+    "康佳萍加油，马上就要通关啦！",
+    "太厉害啦！康佳萍一路领先～"
+];
 
 function start(){
     bgm.play().catch(()=>{});
@@ -187,111 +264,125 @@ function start(){
     winModal.style.display = 'none';
     cards = [];
     slot = [];
-    gameEl.innerHTML = '';
-    slotEl.innerHTML = '';
+    score = 0;
+    clearCount = 0;
+    gameArea.innerHTML = '';
+    slotArea.innerHTML = '';
+    scoreNum.innerText = 0;
     createCards();
     renderSlot();
-    updateLeft();
+    updateInfo();
 }
 
+// 创建卡片
 function createCards(){
     let list = [];
-    let types = icons.length;
-    for(let i=0;i<total;i++){
-        list.push(icons[i%types]);
-    }
-    shuffle(list);
+    for(let i=0;i<totalCards;i++) list.push(icons[i%icons.length]);
+    list.sort(()=>Math.random()-0.5);
+
     for(let layer=0;layer<layers;layer++){
-        for(let i=0;i<total/layers;i++){
+        for(let i=0;i<totalCards/layers;i++){
             const icon = list.pop();
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerText = icon;
-            card.dataset.icon = icon;
-            const offset = layer*8;
-            card.style.left = 20 + Math.random()*280 + offset + 'px';
-            card.style.top = 20 + Math.random()*280 + offset + 'px';
-            card.style.zIndex = layer+1;
-            card.onclick = ()=>takeCard(card);
-            gameEl.appendChild(card);
-            cards.push(card);
+            const el = document.createElement('div');
+            el.className = 'card';
+            el.innerText = icon;
+            el.dataset.icon = icon;
+            const ofs = layer*7;
+            el.style.left = 20 + Math.random()*280 + ofs + 'px';
+            el.style.top = 20 + Math.random()*280 + ofs + 'px';
+            el.style.zIndex = layer+1;
+            el.onclick = ()=>pickCard(el);
+            gameArea.appendChild(el);
+            cards.push(el);
         }
     }
-    checkTop();
+    refreshTop();
 }
 
-function shuffle(a){
-    for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]] = [a[j],a[i]];
-    }
-}
-
-function checkTop(){
+// 刷新顶层可点击
+function refreshTop(){
     cards.forEach(c=>c.classList.remove('disabled'));
     for(let i=cards.length-1;i>=0;i--){
         const c = cards[i];
         if(c.classList.contains('taken')) continue;
-        const rect = c.getBoundingClientRect();
+        const r = c.getBoundingClientRect();
         for(let j=i-1;j>=0;j--){
-            const under = cards[j];
-            if(under.classList.contains('taken')) continue;
-            const urect = under.getBoundingClientRect();
-            if(rect.left+6 > urect.left && rect.left < urect.left+44
-            && rect.top+6 > urect.top && rect.top < urect.top+44){
-                under.classList.add('disabled');
+            const u = cards[j];
+            if(u.classList.contains('taken')) continue;
+            const ur = u.getBoundingClientRect();
+            if(!(r.right < ur.left+6 || r.left > ur.right-6 || r.bottom < ur.top+6 || r.top > ur.bottom-6)){
+                u.classList.add('disabled');
             }
         }
     }
 }
 
-function takeCard(card){
-    if(card.classList.contains('disabled') || card.classList.contains('taken')) return;
+// 选卡
+function pickCard(el){
+    if(el.classList.contains('disabled')||el.classList.contains('taken')) return;
     if(slot.length >= maxSlot){
         failModal.style.display = 'flex';
         bgm.pause();
         return;
     }
-    playSound(takeSnd);
-    card.classList.add('taken');
-    slot.push(card.dataset.icon);
+    playSound(takeAudio);
+    el.classList.add('taken');
+    slot.push(el.dataset.icon);
     checkMatch();
     renderSlot();
-    checkTop();
-    updateLeft();
+    refreshTop();
+    updateInfo();
     checkWin();
 }
 
+// 3个相同消除
 function checkMatch(){
-    const count = {};
-    slot.forEach(i=>count[i]=(count[i]||0)+1);
-    for(const k in count){
-        if(count[k]>=3){
-            slot = slot.filter(i=>i!=k);
-            playSound(clearSnd);
-            break;
+    const cnt = {};
+    slot.forEach(e=>cnt[e]=(cnt[e]||0)+1);
+    for(const k in cnt){
+        if(cnt[k]>=3){
+            slot = slot.filter(e=>e!=k);
+            score += 10;
+            clearCount++;
+            scoreNum.innerText = score;
+            playSound(clearAudio);
+
+            // 每5次消除 → 弹出鼓励
+            if(clearCount %5 ===0){
+                showCheer();
+            }
         }
     }
 }
 
+// 显示鼓励弹窗
+function showCheer(){
+    const txt = cheerTexts[Math.floor(Math.random()*cheerTexts.length)];
+    cheerText.innerText = txt;
+    cheerModal.style.display = 'block';
+}
+function closeCheer(){
+    cheerModal.style.display = 'none';
+}
+
+// 渲染卡槽
 function renderSlot(){
-    slotEl.innerHTML = '';
+    slotArea.innerHTML = '';
     for(let i=0;i<maxSlot;i++){
         const s = document.createElement('div');
         s.className = 'slot';
         if(slot[i]) s.innerText = slot[i];
-        slotEl.appendChild(s);
+        slotArea.appendChild(s);
     }
 }
 
-function updateLeft(){
+function updateInfo(){
     const cnt = cards.filter(c=>!c.classList.contains('taken')).length;
     leftNum.innerText = cnt;
 }
 
 function checkWin(){
-    const all = cards.every(c=>c.classList.contains('taken'));
-    if(all){
+    if(cards.every(c=>c.classList.contains('taken'))){
         winModal.style.display = 'flex';
         bgm.pause();
     }
