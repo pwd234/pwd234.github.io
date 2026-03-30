@@ -63,7 +63,7 @@ body {
 
 <div class="final" id="finalBox">
   <h2>🎉 全部10关完美通关！🎉</h2>
-  <p>你太棒了！跳跳虎征服所有迷宫<br>这份勇敢，献给最优秀的康佳萍 ✨</p>
+  <p>你太棒了！跳跳虎征服所有迷宫<br>这份勇敢，献给最优秀的康佳萍 ✨</p >
   <button id="restartAll">重新挑战</button>
 </div>
 
@@ -332,4 +332,105 @@ function nextLevel(){
 
 // ===================== 超萌迪士尼动漫跳跳虎 · 最终优化版 =====================
 function drawTiger(x, y) {
-  const cx = x * cell + 1
+  const cx = x * cell + 12;
+  const cy = y * cell + 12;
+
+  // 耳朵（橘色+黑色边）
+  ctx.fillStyle = "#ff9800";
+  ctx.beginPath(); ctx.ellipse(cx-7, cy-9, 5, 7, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx+7, cy-9, 5, 7, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#222";
+  ctx.beginPath(); ctx.arc(cx-7, cy-9, 2.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+7, cy-9, 2.5, 0, Math.PI*2); ctx.fill();
+
+  // 头部
+  ctx.fillStyle = "#ff9800";
+  ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI*2); ctx.fill();
+
+  // 虎纹（标志性！）
+  ctx.fillStyle = "#222";
+  ctx.fillRect(cx-3, cy-8, 6, 2);
+  ctx.fillRect(cx-7, cy-5, 3, 2);
+  ctx.fillRect(cx+4, cy-5, 3, 2);
+
+  // 大眼睛
+  ctx.fillStyle = "#fff";
+  ctx.beginPath(); ctx.ellipse(cx-4, cy-1, 3, 3.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx+4, cy-1, 3, 3.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#000";
+  ctx.beginPath(); ctx.arc(cx-4, cy-1, 1.8, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+4, cy-1, 1.8, 0, Math.PI*2); ctx.fill();
+
+  // 小鼻子
+  ctx.fillStyle = "#000";
+  ctx.beginPath(); ctx.arc(cx, cy+2, 1.2, 0, Math.PI*2); ctx.fill();
+
+  // 胡须
+  ctx.strokeStyle = "#333";
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(cx-6,cy+2); ctx.lineTo(cx-2,cy+1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-6,cy+3); ctx.lineTo(cx-2,cy+3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+6,cy+2); ctx.lineTo(cx+2,cy+1); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+6,cy+3); ctx.lineTo(cx+2,cy+3); ctx.stroke();
+}
+
+function draw(){
+  ctx.clearRect(0,0,360,360);
+  const m=levels[currentLevel];
+  for(let y=0;y<size;y++){
+    for(let x=0;x<size;x++){
+      ctx.fillStyle=m[y][x]?'#6b8e23':'#fefbe2';
+      ctx.fillRect(x*cell,y*cell,cell,cell);
+      ctx.strokeStyle='#556b2f'; ctx.lineWidth=1;
+      ctx.strokeRect(x*cell,y*cell,cell,cell);
+    }
+  }
+
+  ctx.fillStyle='#ff69b4';
+  ctx.beginPath(); ctx.arc(ex*cell+12, ey*cell+12, 7, 0, Math.PI*2); ctx.fill();
+
+  drawTiger(px, py);
+}
+
+function startTimer(){
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    time--; timeEl.textContent=time;
+    if(time<=0){alert('时间到，重新挑战');nextLevel()}
+  },1000);
+}
+
+function showConfetti(){
+  const colors=['#ff6b9d','#ff9800','#4fc3f7','#81c784','#ffd54f'];
+  confetti.innerHTML='';
+  for(let i=0;i<150;i++){
+    const c=document.createElement('div');
+    c.style.position='absolute';
+    c.style.width='6px'; c.style.height='3px';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.left=Math.random()*100+'%';
+    c.style.top='-10px';
+    c.style.animation=`fall ${2.2+Math.random()*2}s linear forwards`;
+    c.style.opacity=0.9;
+    confetti.appendChild(c);
+  }
+  setTimeout(()=>confetti.innerHTML='',5000);
+}
+
+let style=document.createElement('style');
+style.innerHTML=`@keyframes fall{100%{top:100%;transform:rotate(600deg);}}`;
+document.head.appendChild(style);
+
+function fullReset(){
+  currentLevel=0;
+  finalBox.style.display='none';
+  confetti.innerHTML='';
+  nextLevel();
+}
+
+restartAllBtn.onclick=fullReset;
+document.addEventListener('touchstart',playBGM,{once:true});
+fullReset();
+</script>
+</body>
+</html>
