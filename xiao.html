@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🐯跳跳虎消消乐 - 康佳萍专属🐯</title>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+}
+body{
+    background:#fdd6e0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:10px;
+}
+.main{
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    border-radius:20px;
+    padding:15px;
+    box-shadow:0 0 30px rgba(255,100,150,0.2);
+    position:relative;
+}
+.title{
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    color:#ff4a8e;
+    margin-bottom:10px;
+}
+.name{
+    color:#ff2a6d;
+    font-size:24px;
+}
+.score-box{
+    text-align:center;
+    font-size:17px;
+    color:#ff5789;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+.game-area{
+    width:100%;
+    aspect-ratio:1/1;
+    background:#ffe6ef;
+    border-radius:16px;
+    position:relative;
+    overflow:hidden;
+}
+.card{
+    position:absolute;
+    width:50px;
+    height:50px;
+    background:#ffffff;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    cursor:pointer;
+    transition:transform 0.2s;
+    border:2px solid #ffc1d6;
+}
+.card.disabled{
+    opacity:0.4;
+    pointer-events:none;
+}
+.card.taken{
+    opacity:0;
+    pointer-events:none;
+}
+.slot-area{
+    height:70px;
+    background:#fff5f9;
+    border-radius:12px;
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:0 10px;
+}
+.slot{
+    width:50px;
+    height:50px;
+    background:#fff;
+    border:2px dashed #ff99bb;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+}
+.modal{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(255,255,255,0.95);
+    z-index:999;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#ff337a;
+    font-weight:bold;
+}
+.modal h2{
+    font-size:32px;
+    margin-bottom:10px;
+}
+.modal p{
+    font-size:18px;
+    margin-bottom:20px;
+}
+.modal button{
+    padding:12px 30px;
+    background:#ff4a8e;
+    color:#fff;
+    border:none;
+    border-radius:30px;
+    font-size:18px;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="main">
+    <div class="title">🐯 跳跳虎消消乐 🐯<br>献给 <span class="name">康佳萍</span></div>
+    <div class="score-box">剩余卡片：<span id="left">0</span></div>
+    <div class="game-area" id="game"></div>
+    <div class="slot-area" id="slot"></div>
+</div>
+
+<div class="modal" id="failModal">
+    <h2>游戏结束</h2>
+    <p>康佳萍加油，再来一次！</p >
+    <button onclick="start()">重新开始</button>
+</div>
+
+<div class="modal" id="winModal">
+    <h2>🎉恭喜通关🎉</h2>
+    <p>康佳萍太棒啦！</p >
+    <button onclick="start()">再来一局</button>
+</div>
+
+<audio id="bgm" loop>
+<audio id="takeSnd">
+<audio id="clearSnd">
+
+<script>
+const gameEl = document.getElementById('game');
+const slotEl = document.getElementById('slot');
+const leftNum = document.getElementById('left');
+const failModal = document.getElementById('failModal');
+const winModal = document.getElementById('winModal');
+
+const bgm = document.getElementById('bgm');
+const takeSnd = document.getElementById('takeSnd');
+const clearSnd = document.getElementById('clearSnd');
+
+bgm.src = 'tiger.mp3';
+takeSnd.src = 'take.mp3';
+clearSnd.src = 'clear.mp3';
+
+const icons = ['🐯','🐯','🐯','🍯','❤️','🌈','🐻','🥕'];
+const layers = 3;
+const total = 90;
+
+let cards = [];
+let slot = [];
+const maxSlot = 7;
+
+function start(){
+    bgm.play().catch(()=>{});
+    failModal.style.display = 'none';
+    winModal.style.display = 'none';
+    cards = [];
+    slot = [];
+    gameEl.innerHTML = '';
+    slotEl.innerHTML = '';
+    createCards();
+    renderSlot();
+    updateLeft();
+}
+
+function createCards(){
+    let list = [];
+    let types = icons.length;
+    for(let i=0;i<total;i++){
+        list.push(icons[i%types]);
+    }
+    shuffle(list);
+    for(let layer=0;layer<layers;layer++){
+        for(let i=0;i<total/layers;i++){
+            const icon = list.pop();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerText = icon;
+            card.dataset.icon = icon;
+            const offset = layer*8;
+            card.style.left = 20 + Math.random()*280 + offset + 'px';
+            card.style.top = 20 + Math.random()*280 + offset + 'px';
+            card.style.zIndex = layer+1;
+            card.onclick = ()=>takeCard(card);
+            gameEl.appendChild(card);
+            cards.push(card);
+        }
+    }
+    checkTop();
+}
+
+function shuffle(a){
+    for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+    }
+}
+
+function checkTop(){
+    cards.forEach(c=>c.classList.remove('disabled'));
+    for(let i=cards.length-1;i>=0;i--){
+        const c = cards[i];
+        if(c.classList.contains('taken')) continue;
+        const rect = c.getBoundingClientRect();
+        for(let j=i-1;j>=0;j--){
+            const under = cards[j];
+            if(under.classList.contains('taken')) continue;
+            const urect = under.getBoundingClientRect();
+            if(rect.left+6 > urect.left && rect.left < urect.left+44
+            && rect.top+6 > urect.top && rect.top < urect.top+44){
+                under.classList.add('disabled');
+            }
+        }
+    }
+}
+
+function takeCard(card){
+    if(card.classList.contains('disabled') || card.classList.contains('taken')) return;
+    if(slot.length >= maxSlot){
+        failModal.style.display = 'flex';
+        bgm.pause();
+        return;
+    }
+    playSound(takeSnd);
+    card.classList.add('taken');
+    slot.push(card.dataset.icon);
+    checkMatch();
+    renderSlot();
+    checkTop();
+    updateLeft();
+    checkWin();
+}
+
+function checkMatch(){
+    const count = {};
+    slot.forEach(i=>count[i]=(count[i]||0)+1);
+    for(const k in count){
+        if(count[k]>=3){
+            slot = slot.filter(i=>i!=k);
+            playSound(clearSnd);
+            break;
+        }
+    }
+}
+
+function renderSlot(){
+    slotEl.innerHTML = '';
+    for(let i=0;i<maxSlot;i++){
+        const s = document.createElement('div');
+        s.className = 'slot';
+        if(slot[i]) s.innerText = slot[i];
+        slotEl.appendChild(s);
+    }
+}
+
+function updateLeft(){
+    const cnt = cards.filter(c=>!c.classList.contains('taken')).length;
+    leftNum.innerText = cnt;
+}
+
+function checkWin(){
+    const all = cards.every(c=>c.classList.contains('taken'));
+    if(all){
+        winModal.style.display = 'flex';
+        bgm.pause();
+    }
+}
+
+function playSound(a){
+    a.currentTime=0;
+    a.play().catch(()=>{});
+}
+
+window.onload = start;
+</script>
+</body>
+</html>
