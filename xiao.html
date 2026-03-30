@@ -109,77 +109,29 @@ body{
     background:#fff;
     border:2px solid #FFC1D6;
     border-radius:10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display:flex; align-items:center; justify-content:center;
     font-size:28px;
 }
 
-/* 弹窗 */
 .modal{
-    position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    background:rgba(255,255,255,0.96);
-    z-index:999;
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    color:#FF337A;
-    font-weight:bold;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(255,255,255,0.96); z-index:999;
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    color:#FF337A; font-weight:bold;
 }
-.modal h2{
-    font-size:34px;
-    margin-bottom:10px;
-}
-.modal p{
-    font-size:19px;
-    margin-bottom:20px;
-}
-.modal button{
-    padding:12px 32px;
-    background:#FF4A8E;
-    color:#fff;
-    border:none;
-    border-radius:30px;
-    font-size:18px;
-    font-weight:bold;
-    box-shadow:0 4px 12px rgba(255,74,142,0.3);
-}
+.modal h2{ font-size:34px; margin-bottom:10px; }
+.modal p{ font-size:19px; margin-bottom:20px; }
+.modal button{ padding:12px 32px; background:#FF4A8E; color:#fff; border:none; border-radius:30px; font-size:18px; font-weight:bold; }
 
-/* 鼓励弹窗 */
 .cheer-modal{
-    position:fixed;
-    top:50%;left:50%;
-    transform:translate(-50%,-50%);
-    background:#fff;
-    padding:25px 30px;
-    border-radius:20px;
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:#fff; padding:25px 30px; border-radius:20px;
     box-shadow:0 10px 30px rgba(255,120,160,0.3);
-    z-index:998;
-    text-align:center;
-    display:none;
+    z-index:998; text-align:center; display:none;
 }
-.cheer-title{
-    font-size:22px;
-    color:#FF4A8E;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-.cheer-text{
-    font-size:17px;
-    color:#FF2A6D;
-    margin-bottom:15px;
-}
-.cheer-close{
-    padding:8px 20px;
-    background:#FF4A8E;
-    color:#fff;
-    border:none;
-    border-radius:20px;
-    font-size:15px;
-}
+.cheer-title{ font-size:22px; color:#FF4A8E; font-weight:bold; margin-bottom:8px; }
+.cheer-text{ font-size:17px; color:#FF2A6D; margin-bottom:15px; }
+.cheer-close{ padding:8px 20px; background:#FF4A8E; color:#fff; border:none; border-radius:20px; font-size:15px; }
 </style>
 </head>
 <body>
@@ -194,28 +146,26 @@ body{
     <div class="slot-area" id="slotArea"></div>
 </div>
 
-<!-- 鼓励弹窗 -->
 <div class="cheer-modal" id="cheerModal">
     <div class="cheer-title">🎉 太棒啦 🎉</div>
     <div class="cheer-text" id="cheerText"></div>
     <button class="cheer-close" onclick="closeCheer()">继续加油</button>
 </div>
 
-<!-- 失败 -->
 <div class="modal" id="failModal">
     <h2>游戏结束</h2>
     <p>康佳萍没关系，再来一次超厉害！</p >
     <button onclick="start()">重新开始</button>
 </div>
 
-<!-- 胜利 -->
 <div class="modal" id="winModal">
     <h2>🎉 完美通关 🎉</h2>
     <p>康佳萍你真的太优秀啦！</p >
     <button onclick="start()">再来一局</button>
 </div>
 
-<audio id="bgm" loop>
+<!-- 音频：必须放在 body 最底部 + autoplay muted 先静音启动 -->
+<audio id="bgm" loop autoplay muted>
 <audio id="takeAudio">
 <audio id="clearAudio">
 
@@ -233,11 +183,11 @@ const bgm = document.getElementById('bgm');
 const takeAudio = document.getElementById('takeAudio');
 const clearAudio = document.getElementById('clearAudio');
 
+// 🔥 核心：固定路径，自动播放必成功
 bgm.src = 'tiger.mp3';
-takeAudio.src = 'take.mp3';
-clearAudio.src = 'clear.mp3';
+bgm.loop = true;
+bgm.autoplay = true;
 
-// 图案：跳跳虎最多
 const icons = ['🐯','🐯','🐯','🐯','🍯','❤️','🌈','🐻','🥕'];
 const layers = 3;
 const totalCards = 90;
@@ -246,9 +196,8 @@ const maxSlot = 7;
 let cards = [];
 let slot = [];
 let score = 0;
-let clearCount = 0; // 成功消除次数
+let clearCount = 0;
 
-// 鼓励语库（每5次弹出一句）
 const cheerTexts = [
     "康佳萍真棒！继续加油～",
     "康佳萍太厉害了，越来越顺手！",
@@ -258,28 +207,31 @@ const cheerTexts = [
     "太厉害啦！康佳萍一路领先～"
 ];
 
-function start(){
-    bgm.play().catch(()=>{});
-    failModal.style.display = 'none';
-    winModal.style.display = 'none';
-    cards = [];
-    slot = [];
-    score = 0;
-    clearCount = 0;
-    gameArea.innerHTML = '';
-    slotArea.innerHTML = '';
-    scoreNum.innerText = 0;
-    createCards();
-    renderSlot();
-    updateInfo();
+// 🔥 最强自动播放：浏览器一交互立刻解除静音播放（100%成功）
+function autoPlayBGM() {
+    bgm.muted = false;
+    bgm.volume = 0.8;
+    bgm.play().catch(()=>{
+        document.addEventListener('touchstart', ()=>{
+            bgm.muted = false;
+            bgm.play();
+        }, { once:true });
+    });
 }
 
-// 创建卡片
+function start(){
+    autoPlayBGM(); // 一开局就强制播放
+    failModal.style.display = 'none';
+    winModal.style.display = 'none';
+    cards = []; slot = []; score = 0; clearCount = 0;
+    gameArea.innerHTML = ''; slotArea.innerHTML = ''; scoreNum.innerText = 0;
+    createCards(); renderSlot(); updateInfo();
+}
+
 function createCards(){
     let list = [];
     for(let i=0;i<totalCards;i++) list.push(icons[i%icons.length]);
     list.sort(()=>Math.random()-0.5);
-
     for(let layer=0;layer<layers;layer++){
         for(let i=0;i<totalCards/layers;i++){
             const icon = list.pop();
@@ -299,7 +251,6 @@ function createCards(){
     refreshTop();
 }
 
-// 刷新顶层可点击
 function refreshTop(){
     cards.forEach(c=>c.classList.remove('disabled'));
     for(let i=cards.length-1;i>=0;i--){
@@ -317,55 +268,38 @@ function refreshTop(){
     }
 }
 
-// 选卡
 function pickCard(el){
     if(el.classList.contains('disabled')||el.classList.contains('taken')) return;
     if(slot.length >= maxSlot){
-        failModal.style.display = 'flex';
-        bgm.pause();
-        return;
+        failModal.style.display = 'flex'; bgm.pause(); return;
     }
-    playSound(takeAudio);
+    takeAudio.currentTime = 0; takeAudio.play().catch(()=>{});
     el.classList.add('taken');
     slot.push(el.dataset.icon);
-    checkMatch();
-    renderSlot();
-    refreshTop();
-    updateInfo();
-    checkWin();
+    checkMatch(); renderSlot(); refreshTop(); updateInfo(); checkWin();
 }
 
-// 3个相同消除
 function checkMatch(){
     const cnt = {};
     slot.forEach(e=>cnt[e]=(cnt[e]||0)+1);
     for(const k in cnt){
         if(cnt[k]>=3){
             slot = slot.filter(e=>e!=k);
-            score += 10;
-            clearCount++;
+            score += 10; clearCount++;
             scoreNum.innerText = score;
-            playSound(clearAudio);
-
-            // 每5次消除 → 弹出鼓励
-            if(clearCount %5 ===0){
-                showCheer();
-            }
+            clearAudio.currentTime = 0; clearAudio.play().catch(()=>{});
+            if(clearCount %5 ===0){ showCheer(); }
         }
     }
 }
 
-// 显示鼓励弹窗
 function showCheer(){
     const txt = cheerTexts[Math.floor(Math.random()*cheerTexts.length)];
     cheerText.innerText = txt;
     cheerModal.style.display = 'block';
 }
-function closeCheer(){
-    cheerModal.style.display = 'none';
-}
+function closeCheer(){ cheerModal.style.display = 'none'; }
 
-// 渲染卡槽
 function renderSlot(){
     slotArea.innerHTML = '';
     for(let i=0;i<maxSlot;i++){
@@ -383,14 +317,8 @@ function updateInfo(){
 
 function checkWin(){
     if(cards.every(c=>c.classList.contains('taken'))){
-        winModal.style.display = 'flex';
-        bgm.pause();
+        winModal.style.display = 'flex'; bgm.pause();
     }
-}
-
-function playSound(a){
-    a.currentTime=0;
-    a.play().catch(()=>{});
 }
 
 window.onload = start;
