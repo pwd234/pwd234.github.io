@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>康佳萍的跳跳虎消消乐 | 维尼家族大冒险</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #2b6e3c 0%, #1d4d2a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+
+        .game-container {
+            background: #ffefb9;
+            border-radius: 72px;
+            padding: 24px 28px 32px 28px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3), inset 0 1px 4px rgba(255,255,200,0.8);
+            border: 3px solid #f9b81b;
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff0cf;
+            padding: 8px 20px 8px 25px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 0 #c29b2e;
+        }
+
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-area h1 {
+            font-size: 1.9rem;
+            margin: 0;
+            color: #d2691e;
+            text-shadow: 2px 2px 0 #ffd966;
+            letter-spacing: 2px;
+        }
+
+        .tigger-icon {
+            font-size: 48px;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+            animation: bounce 2s infinite ease;
+        }
+
+        @keyframes bounce {
+            0%,100%{ transform: translateY(0);}
+            50%{ transform: translateY(-6px);}
+        }
+
+        .score-board {
+            background: #f7b05e;
+            border-radius: 40px;
+            padding: 5px 18px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: inset 0 -2px 0 #b4621a, 0 5px 12px rgba(0,0,0,0.2);
+        }
+
+        .score-board p {
+            margin: 5px 0;
+            font-size: 1.3rem;
+        }
+
+        .score-board .success-count {
+            font-size: 2rem;
+            font-weight: bold;
+            background: #fff0b5;
+            color: #b64926;
+            border-radius: 40px;
+            padding: 0 15px;
+            margin-top: 4px;
+            line-height: 1.3;
+            display: inline-block;
+            min-width: 70px;
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0 10px;
+            background: #fdebb3;
+            border-radius: 48px;
+            padding: 20px;
+            box-shadow: inset 0 0 0 4px #ffdd99, 0 12px 24px rgba(0,0,0,0.2);
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 28px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+            cursor: pointer;
+            background-color: #ffefcf;
+        }
+
+        .control-bar {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .cute-btn {
+            background: #fea82f;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: inherit;
+            padding: 8px 24px;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 0 #a64b1e;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cute-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #a64b1e;
+        }
+
+        .music-btn {
+            background: #7b3f00;
+            box-shadow: 0 5px 0 #4e2a00;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #ffffbb;
+            text-shadow: 1px 1px 0 #6b3f00;
+        }
+        
+        .auto-shuffle-tip {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            background: rgba(0,0,0,0.6);
+            color: #ffef9e;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="title-area">
+                <div class="tigger-icon">🐯🍯</div>
+                <h1>跳跳虎消消乐</h1>
+                <div class="tigger-icon">🐻⭐</div>
+            </div>
+            <div class="score-board">
+                <p>✨ 康佳萍 · 胜利次数 ✨</p>
+                <div class="success-count" id="successCounter">0</div>
+            </div>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="480" height="480"></canvas>
+        </div>
+
+        <div class="control-bar">
+            <button class="cute-btn" id="shuffleBtn">🔄 洗牌换新</button>
+            <button class="cute-btn music-btn" id="musicBtn">🎵 音乐开关</button>
+        </div>
+        <footer>🐯 点击相邻的维尼家族成员交换，连成三个以上消除！每成功五次康佳萍会收到鼓励！游戏会自动洗牌让您不会卡住~ 🐻</footer>
+    </div>
+    <div class="auto-shuffle-tip">✨ 无路可走时自动洗牌 ✨</div>
+</div>
+
+<script>
+    (function(){
+        // ---------- 游戏配置 ----------
+        const ROWS = 6;
+        const COLS = 6;
+        const TYPES = 5; // 0-维尼,1-跳跳虎,2-小猪,3-屹耳,4-瑞比
+        let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+        
+        let selectedRow = -1, selectedCol = -1;
+        let successActionCount = 0;
+        let isProcessing = false;
+        let autoShuffling = false;
+        
+        let canvas = document.getElementById('gameCanvas');
+        let ctx = canvas.getContext('2d');
+        
+        let cellW = canvas.width / COLS;
+        let cellH = canvas.height / ROWS;
+        
+        let bgMusic = null;
+        let musicPlaying = false;
+        let musicBtn = document.getElementById('musicBtn');
+        const successSpan = document.getElementById('successCounter');
+        
+        // ---------- 辅助函数：安全绘制文字 ----------
+        function drawEmoji(ctx, emoji, x, y, size) {
+            ctx.font = `${size}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#fff8e7";
+            ctx.fillText(emoji, x, y);
+        }
+        
+        // ---------- 绘制所有维尼家族角色 (完全修复，确保显示) ----------
+        function drawWinnie(ctx, x, y, w, h) {
+            const cx = x + w/2;
+            const cy = y + h/2;
+            const r = Math.min(w, h) * 0.32;
+            ctx.save();
+            // 身体
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, r*0.9, r*0.95, 0, 0, Math.PI*2);
+            ctx.fillStyle = "#f9d56e";
+            ctx.fill();
+            ctx.fillStyle = "#c28a3b";
+            // 眼睛
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.32, cy - r*0.22, r*0.12, r*0.14, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.32, cy - r*0.22, r*0.12, r*0.14, 0, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#2c1a0c";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.38, cy - r*0.26, r*0.07, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.38, cy - r*0.26, r*0.07, 0, Math.PI*2);
+            ctx.fill();
+            // 鼻子
+            ctx.fillStyle = "#5a3a1a";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + r*0.1, r*0.18, r*0.12, 0, 0, Math.PI*2);
+            ctx.fill();
+            // 耳朵
+            ctx.fillStyle = "#ed7a2e";
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.55, cy - r*0.55, r*0.22, r*0.26, -0.2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.55, cy - r*0.55, r*0.22, r*0.26, 0.2, 0, Math.PI*2);
+            ctx.fill();
+            // 红衣服
+            ctx.fillStyle = "#d44c2f";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + r*0.45, r*0.6, r*0.35, 0, 0, Math.PI*2);
+            ctx.fill();
+            // 蜂蜜罐
+            drawEmoji(ctx, "🍯", cx + w*0.2, cy + h*0.25, w*0.22);
+            ctx.restore();
+        }
+        
+        function drawTigger(ctx, x, y, w, h) {
+            const cx = x + w/2;
+            const cy = y + h/2;
+            const r = Math.min(w, h) * 0.32;
+            ctx.save();
+            // 身体
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, r*0.9, r*0.95, 0, 0, Math.PI*2);
+            ctx.fillStyle = "#f9a01b";
+            ctx.fill();
+            // 条纹
+            ctx.fillStyle = "#6b3c0c";
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.3, cy - r*0.05, r*0.12, r*0.08, -0.3, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.3, cy - r*0.05, r*0.12, r*0.08, 0.3, 0, Math.PI*2);
+            ctx.fill();
+            // 眼睛
+            ctx.fillStyle = "#2c1a0c";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.38, cy - r*0.22, r*0.08, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.38, cy - r*0.22, r*0.08, 0, Math.PI*2);
+            ctx.fill();
+            // 鼻子
+            ctx.fillStyle = "#a5521a";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + r*0.15, r*0.22, r*0.12, 0, 0, Math.PI*2);
+            ctx.fill();
+            // 耳朵
+            ctx.fillStyle = "#e0851a";
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.7, cy - r*0.6, r*0.28, r*0.32, -0.3, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.7, cy - r*0.6, r*0.28, r*0.32, 0.3, 0, Math.PI*2);
+            ctx.fill();
+            // 胡须
+            ctx.beginPath();
+            ctx.moveTo(cx - r*0.45, cy + r*0.05);
+            ctx.lineTo(cx - r*0.75, cy + r*0.05);
+            ctx.moveTo(cx - r*0.45, cy + r*0.15);
+            ctx.lineTo(cx - r*0.7, cy + r*0.13);
+            ctx.moveTo(cx + r*0.45, cy + r*0.05);
+            ctx.lineTo(cx + r*0.75, cy + r*0.05);
+            ctx.moveTo(cx + r*0.45, cy + r*0.15);
+            ctx.lineTo(cx + r*0.7, cy + r*0.13);
+            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = "#6b3c0c";
+            ctx.stroke();
+            ctx.restore();
+        }
+        
+        function drawPiglet(ctx, x, y, w, h) {
+            const cx = x + w/2;
+            const cy = y + h/2;
+            const r = Math.min(w, h) * 0.3;
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, r*0.85, r*0.9, 0, 0, Math.PI*2);
+            ctx.fillStyle = "#ffb7c5";
+            ctx.fill();
+            ctx.fillStyle = "#a1502c";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.35, cy - r*0.22, r*0.1, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.35, cy - r*0.22, r*0.1, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#3e2a1f";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.42, cy - r*0.27, r*0.05, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.42, cy - r*0.27, r*0.05, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#b55b3c";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + r*0.15, r*0.2, r*0.1, 0, 0, Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "#ffa5b5";
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.6, cy - r*0.6, r*0.24, r*0.22, -0.2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.6, cy - r*0.6, r*0.24, r*0.22, 0.2, 0, Math.PI*2);
+            ctx.fill();
+            drawEmoji(ctx, "🌸", cx + w*0.28, cy - h*0.22, w*0.2);
+            ctx.restore();
+        }
+        
+        function drawEeyore(ctx, x, y, w, h) {
+            const cx = x + w/2;
+            const cy = y + h/2;
+            const r = Math.min(w, h) * 0.32;
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, r*0.85, r*0.85, 0, 0, Math.PI*2);
+            ctx.fillStyle = "#a6a6a6";
+            ctx.fill();
+            ctx.fillStyle = "#6b6b6b";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.35, cy - r*0.2, r*0.09, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.35, cy - r*0.2, r*0.09, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#3a3a3a";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.42, cy - r*0.25, r*0.05, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.42, cy - r*0.25, r*0.05, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#5a5a5a";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + r*0.15, r*0.2, r*0.1, 0, 0, Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "#8f8f8f";
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.7, cy - r*0.7, r*0.32, r*0.45, -0.4, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.7, cy - r*0.7, r*0.32, r*0.45, 0.4, 0, Math.PI*2);
+            ctx.fill();
+            drawEmoji(ctx, "🎀", cx, cy + h*0.28, w*0.2);
+            ctx.restore();
+        }
+        
+        function drawRabbit(ctx, x, y, w, h) {
+            const cx = x + w/2;
+            const cy = y + h/2;
+            const r = Math.min(w, h) * 0.3;
+            ctx.save();
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, r*0.85, r*0.9, 0, 0, Math.PI*2);
+            ctx.fillStyle = "#d2a24c";
+            ctx.fill();
+            ctx.fillStyle = "#7a4a1a";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.38, cy - r*0.22, r*0.1, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.38, cy - r*0.22, r*0.1, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#2c1a0c";
+            ctx.beginPath();
+            ctx.arc(cx - r*0.45, cy - r*0.27, r*0.05, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx + r*0.45, cy - r*0.27, r*0.05, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = "#b97f3a";
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + r*0.15, r*0.22, r*0.1, 0, 0, Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "#c99442";
+            ctx.beginPath();
+            ctx.ellipse(cx - r*0.65, cy - r*0.75, r*0.28, r*0.48, -0.2, 0, Math.PI*2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + r*0.65, cy - r*0.75, r*0.28, r*0.48, 0.2, 0, Math.PI*2);
+            ctx.fill();
+            // 胡萝卜
+            ctx.fillStyle = "#f7a81e";
+            ctx.fillRect(cx + r*0.45, cy + r*0.25, w*0.12, h*0.2);
+            ctx.fillStyle = "#4e8d3e";
+            ctx.beginPath();
+            ctx.moveTo(cx + r*0.5, cy + r*0.45);
+            ctx.lineTo(cx + r*0.58, cy + r*0.5);
+            ctx.lineTo(cx + r*0.42, cy + r*0.5);
+            ctx.fill();
+            ctx.restore();
+        }
+        
+        function drawCharacter(ctx, x, y, w, h, type) {
+            switch(type) {
+                case 0: drawWinnie(ctx, x, y, w, h); break;
+                case 1: drawTigger(ctx, x, y, w, h); break;
+                case 2: drawPiglet(ctx, x, y, w, h); break;
+                case 3: drawEeyore(ctx, x, y, w, h); break;
+                case 4: drawRabbit(ctx, x, y, w, h); break;
+                default: drawWinnie(ctx, x, y, w, h);
+            }
+        }
+        
+        // 绘制整个画板
+        function drawBoard() {
+            for(let i = 0; i < ROWS; i++) {
+                for(let j = 0; j < COLS; j++) {
+                    let x = j * cellW;
+                    let y = i * cellH;
+                    ctx.save();
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = "#fff2cf";
+                    ctx.fillRect(x, y, cellW-0.5, cellH-0.5);
+                    ctx.strokeStyle = "#ffd58c";
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x+1, y+1, cellW-2, cellH-2);
+                    let type = board[i][j];
+                    drawCharacter(ctx, x+2, y+2, cellW-4, cellH-4, type);
+                    
+                    if(selectedRow === i && selectedCol === j) {
+                        ctx.strokeStyle = "#ffaa33";
+                        ctx.lineWidth = 4;
+                        ctx.strokeRect(x+2, y+2, cellW-6, cellH-6);
+                        ctx.beginPath();
+                        ctx.arc(x+cellW/2, y+cellH/2, cellW*0.35, 0, Math.PI*2);
+                        ctx.fillStyle = "rgba(255,215,0,0.25)";
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                }
+            }
+        }
+        
+        // ---------- 游戏逻辑 (保持不变，确保功能完整) ----------
+        function getRandomType() {
+            return Math.floor(Math.random() * TYPES);
+        }
+        
+        function getMatchesMatrix(boardData) {
+            let matches = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+            let hasMatch = false;
+            for(let r = 0; r < ROWS; r++) {
+                let len = 1;
+                for(let c = 1; c <= COLS; c++) {
+                    if(c < COLS && boardData[r][c] === boardData[r][c-1]) {
+                        len++;
+                    } else {
+                        if(len >= 3) {
+                            for(let i = c-len; i < c; i++) matches[r][i] = true;
+                            hasMatch = true;
+                        }
+                        len = 1;
+                    }
+                }
+            }
+            for(let c = 0; c < COLS; c++) {
+                let len = 1;
+                for(let r = 1; r <= ROWS; r++) {
+                    if(r < ROWS && boardData[r][c] === boardData[r-1][c]) {
+                        len++;
+                    } else {
+                        if(len >= 3) {
+                            for(let i = r-len; i < r; i++) matches[i][c] = true;
+                            hasMatch = true;
+                        }
+                        len = 1;
+                    }
+                }
+            }
+            return { matches, hasMatch };
+        }
+        
+        function settleMatchesAndDrop(boardData) {
+            let anyEliminated = false;
+            while(true) {
+                const { matches, hasMatch } = getMatchesMatrix(boardData);
+                if(!hasMatch) break;
+                anyEliminated = true;
+                for(let i=0; i<ROWS; i++)
+                    for(let j=0; j<COLS; j++)
+                        if(matches[i][j]) boardData[i][j] = -1;
+                for(let c=0; c<COLS; c++) {
+                    let columnValues = [];
+                    for(let r=ROWS-1; r>=0; r--)
+                        if(boardData[r][c] !== -1) columnValues.push(boardData[r][c]);
+                    while(columnValues.length < ROWS) columnValues.push(getRandomType());
+                    columnValues.reverse();
+                    for(let r=0; r<ROWS; r++) boardData[r][c] = columnValues[r];
+                }
+            }
+            return anyEliminated;
+        }
+        
+        function hasAnyValidMove() {
+            for(let i=0; i<ROWS; i++) {
+                for(let j=0; j<COLS; j++) {
+                    if(j+1 < COLS) {
+                        let temp = board[i][j];
+                        board[i][j] = board[i][j+1];
+                        board[i][j+1] = temp;
+                        let { hasMatch } = getMatchesMatrix(board);
+                        temp = board[i][j];
+                        board[i][j] = board[i][j+1];
+                        board[i][j+1] = temp;
+                        if(hasMatch) return true;
+                    }
+                    if(i+1 < ROWS) {
+                        let temp = board[i][j];
+                        board[i][j] = board[i+1][j];
+                        board[i+1][j] = temp;
+                        let { hasMatch } = getMatchesMatrix(board);
+                        temp = board[i][j];
+                        board[i][j] = board[i+1][j];
+                        board[i+1][j] = temp;
+                        if(hasMatch) return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        function autoShuffleIfNeeded() {
+            if(autoShuffling) return;
+            if(!hasAnyValidMove()) {
+                autoShuffling = true;
+                selectedRow = -1;
+                selectedCol = -1;
+                shuffleBoard(true);
+                autoShuffling = false;
+                if(!hasAnyValidMove()) {
+                    autoShuffling = true;
+                    shuffleBoard(true);
+                    autoShuffling = false;
+                }
+            }
+        }
+        
+        function performEliminateFlow(shouldAddSuccess = true) {
+            let eliminated = settleMatchesAndDrop(board);
+            if(eliminated && shouldAddSuccess) {
+                successActionCount++;
+                successSpan.innerText = successActionCount;
+                if(successActionCount % 5 === 0 && successActionCount > 0) {
+                    const messages = [
+                        "🎉 康佳萍，太棒啦！维尼家族为你欢呼！ 🐻",
+                        "✨ 康佳萍，消消乐天才！跳跳虎都蹦起来了！ 🐯",
+                        "🍯 康佳萍，五次连胜！送你一罐蜂蜜！ 🍯✨",
+                        "⭐ 康佳萍，厉害！小猪皮杰都脸红了！ 🌸",
+                        "💖 康佳萍，超有默契！屹耳都露出微笑啦！ 💖",
+                        "🌸 康佳萍，消消乐女王！瑞比送你胡萝卜！ 🥕"
+                    ];
+                    alert(messages[Math.floor(Math.random() * messages.length)]);
+                }
+            }
+            drawBoard();
+            if(!isProcessing && !autoShuffling) {
+                autoShuffleIfNeeded();
+            }
+            return eliminated;
+        }
+        
+        async function trySwap(r1,c1, r2,c2) {
+            if(isProcessing) return false;
+            if(Math.abs(r1-r2) + Math.abs(c1-c2) !== 1) return false;
+            isProcessing = true;
+            let temp = board[r1][c1];
+            board[r1][c1] = board[r2][c2];
+            board[r2][c2] = temp;
+            const { hasMatch } = getMatchesMatrix(board);
+            if(!hasMatch) {
+                temp = board[r1][c1];
+                board[r1][c1] = board[r2][c2];
+                board[r2][c2] = temp;
+                isProcessing = false;
+                drawBoard();
+                return false;
+            }
+            performEliminateFlow(true);
+            selectedRow = -1;
+            selectedCol = -1;
+            isProcessing = false;
+            drawBoard();
+            return true;
+        }
+        
+        function shuffleBoard(silent = false) {
+            if(isProcessing) return;
+            isProcessing = true;
+            for(let i=0;i<ROWS;i++)
+                for(let j=0;j<COLS;j++)
+                    board[i][j] = getRandomType();
+            settleMatchesAndDrop(board);
+            successActionCount = 0;
+            successSpan.innerText = successActionCount;
+            selectedRow = -1;
+            selectedCol = -1;
+            drawBoard();
+            isProcessing = false;
+            if(!silent) autoShuffleIfNeeded();
+        }
+        
+        function handleCanvasClick(e) {
+            if(isProcessing) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let mouseX = (e.clientX - rect.left) * scaleX;
+            let mouseY = (e.clientY - rect.top) * scaleY;
+            if(mouseX<0 || mouseY<0) return;
+            let col = Math.floor(mouseX / cellW);
+            let row = Math.floor(mouseY / cellH);
+            if(row>=0 && row<ROWS && col>=0 && col<COLS) {
+                if(selectedRow === -1) {
+                    selectedRow = row;
+                    selectedCol = col;
+                    drawBoard();
+                } else {
+                    let sRow = selectedRow, sCol = selectedCol;
+                    if(sRow === row && sCol === col) {
+                        selectedRow = -1;
+                        selectedCol = -1;
+                        drawBoard();
+                        return;
+                    }
+                    trySwap(sRow, sCol, row, col).then(() => {
+                        selectedRow = -1;
+                        selectedCol = -1;
+                        drawBoard();
+                    }).catch(()=>{
+                        selectedRow = -1;
+                        selectedCol = -1;
+                        isProcessing = false;
+                        drawBoard();
+                    });
+                }
+            }
+        }
+        
+        // ---------- 音乐控制 ----------
+        function initAudio() {
+            bgMusic = new Audio('./tiger.mp3');
+            bgMusic.loop = true;
+            bgMusic.volume = 0.5;
+            bgMusic.load();
+            musicBtn.textContent = '🎵 音乐关闭';
+            musicPlaying = false;
+        }
+        
+        function autoPlayMusic() {
+            if (!bgMusic) initAudio();
+            bgMusic.play().then(() => {
+                musicPlaying = true;
+                musicBtn.textContent = '🔊 音乐播放中';
+            }).catch(() => {
+                musicBtn.textContent = '🎵 点击开启音乐';
+                musicPlaying = false;
+                const startMusicOnInteraction = () => {
+                    if (!musicPlaying && bgMusic) {
+                        bgMusic.play().then(() => {
+                            musicPlaying = true;
+                            musicBtn.textContent = '🔊 音乐播放中';
+                        }).catch(e => console.log("音乐启动失败"));
+                    }
+                    document.removeEventListener('click', startMusicOnInteraction);
+                    canvas.removeEventListener('click', startMusicOnInteraction);
+                };
+                document.addEventListener('click', startMusicOnInteraction);
+                canvas.addEventListener('click', startMusicOnInteraction);
+            });
+        }
+        
+        function toggleMusic() {
+            if (!bgMusic) initAudio();
+            if (musicPlaying) {
+                bgMusic.pause();
+                musicBtn.textContent = '🎵 音乐关闭';
+                musicPlaying = false;
+            } else {
+                bgMusic.play().then(() => {
+                    musicBtn.textContent = '🔊 音乐播放中';
+                    musicPlaying = true;
+                }).catch(e => {
+                    console.warn("请确保tiger.mp3文件存在", e);
+                    musicBtn.textContent = '🎵 播放失败?';
+                });
+            }
+        }
+        
+        function bindEvents() {
+            canvas.addEventListener('click', handleCanvasClick);
+            document.getElementById('shuffleBtn').addEventListener('click', () => {
+                if(isProcessing) return;
+                shuffleBoard(false);
+            });
+            musicBtn.addEventListener('click', toggleMusic);
+        }
+        
+        function initBoardNoMatch() {
+            for(let i=0;i<ROWS;i++)
+                for(let j=0;j<COLS;j++)
+                    board[i][j] = getRandomType();
+            settleMatchesAndDrop(board);
+        }
+        
+        function initGame() {
+            initAudio();
+            initBoardNoMatch();
+            selectedRow = -1;
+            successActionCount = 0;
+            successSpan.innerText = successActionCount;
+            drawBoard();
+            bindEvents();
+            autoPlayMusic();
+            autoShuffleIfNeeded();
+        }
+        
+        initGame();
+    })();
+</script>
+</body>
+</html>
