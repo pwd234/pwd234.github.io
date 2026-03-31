@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>跳跳虎化妆间 - 送给康佳萍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', 'Comic Neue', 'Segoe UI', 'Arial Rounded MT Bold', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffcccc 0%, #ffe6cc 20%, #ffffcc 40%, #ccffcc 60%, #cce6ff 80%, #e6ccff 100%);
+            color: #8B4513;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .header {
+            text-align: center;
+            margin: 5px 0;
+            width: 100%;
+            padding: 0 10px;
+        }
+        
+        h1 {
+            color: #FF8C00;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            text-shadow: 3px 3px 0 #FFD700;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        
+        h1:before, h1:after {
+            content: "✨";
+            position: absolute;
+            top: 0;
+            font-size: 1.5rem;
+        }
+        
+        h1:before {
+            left: -30px;
+        }
+        
+        h1:after {
+            right: -30px;
+        }
+        
+        .subtitle {
+            color: #FF4500;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .dedication {
+            background: linear-gradient(90deg, #FF69B4, #FF1493, #FF69B4);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            text-align: center;
+            max-width: 350px;
+            margin: 0 auto 10px;
+            animation: sparkle 3s infinite ease-in-out;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .main-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .tiger-display-area {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.2);
+            border: 5px solid #FF8C00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .tiger-canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        #tiger-canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 15px;
+            background: #FFF8E7;
+        }
+        
+        .controls-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .makeup-controls {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.2);
+            border: 4px solid #FF69B4;
+        }
+        
+        .control-section {
+            margin-bottom: 15px;
+        }
+        
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            color: #FF4500;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            text-align: center;
+            border-bottom: 2px dashed #FFB6C1;
+            padding-bottom: 5px;
+        }
+        
+        .makeup-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .makeup-btn {
+            background: #FFE4E1;
+            border: 2px solid #FFB6C1;
+            border-radius: 50px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            color: #8B4513;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .makeup-btn:active {
+            transform: scale(0.95);
+            background: #FFB6C1;
+        }
+        
+        .makeup-btn.active {
+            background: #FF69B4;
+            color: white;
+            border-color: #FF1493;
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #8B4513;
+            cursor: pointer;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(to right, #FF8C00, #FFA500);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .action-btn.reset {
+            background: linear-gradient(to right, #FF416C, #FF4B2B);
+        }
+        
+        .action-btn.save {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
+            border: 3px solid #FFD700;
+            font-size: 0.9rem;
+            color: #8B4513;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .creator {
+            margin-top: 5px;
+            text-align: center;
+            color: #8B4513;
+            font-size: 0.9rem;
+            padding: 5px;
+            width: 100%;
+        }
+        
+        .creator span {
+            color: #FF4500;
+            font-weight: bold;
+        }
+        
+        .encouragement {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #8B4513;
+            padding: 20px 25px;
+            border-radius: 20px;
+            z-index: 1000;
+            text-align: center;
+            width: 85%;
+            max-width: 400px;
+            display: none;
+            border: 5px solid #FFD700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        
+        .encouragement h3 {
+            color: #FF4500;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .encouragement-text {
+            font-style: italic;
+            color: #FF69B4;
+            margin: 10px 0;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        
+        .close-btn {
+            background: #FF8C00;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* 微信浏览器优化 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        @supports (-webkit-touch-callout: none) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+        }
+        
+        /* 防止微信下拉刷新 */
+        body {
+            overscroll-behavior: none;
+        }
+        
+        /* 横屏优化 */
+        @media (orientation: landscape) {
+            .main-area {
+                flex-direction: row;
+            }
+            
+            .tiger-display-area {
+                flex: 1;
+            }
+            
+            .controls-area {
+                flex: 1;
+            }
+            
+            .dedication {
+                max-width: 300px;
+                font-size: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .makeup-options {
+                justify-content: center;
+            }
+            
+            .makeup-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .action-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .action-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>跳跳虎化妆间</h1>
+        <p class="subtitle">为可爱的跳跳虎打造全新造型！</p>
+        <div class="dedication">🎨 特别为 <span>康佳萍</span> 打造的化妆游戏 🎨</div>
+    </div>
+    
+    <div class="game-container">
+        <div class="main-area">
+            <div class="tiger-display-area">
+                <div class="tiger-canvas-container">
+                    <canvas id="tiger-canvas" width="400" height="400"></canvas>
+                </div>
+            </div>
+            
+            <div class="controls-area">
+                <div class="makeup-controls">
+                    <div class="control-section">
+                        <div class="section-title">💄 脸部化妆</div>
+                        <div class="makeup-options">
+                            <button class="makeup-btn" data-type="blush">🥰 腮红</button>
+                            <button class="makeup-btn" data-type="lipstick">💋 口红</button>
+                            <button class="makeup-btn" data-type="eyeshadow">👁️ 眼影</button>
+                            <button class="makeup-btn" data-type="freckles">✨ 雀斑</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="section-title">🎩 配饰装扮</div>
+                        <div class="makeup-options">
+                            <button class="makeup-btn" data-type="hat">🎩 帽子</button>
+                            <button class="makeup-btn" data-type="glasses">👓 眼镜</button>
+                            <button class="makeup-btn" data-type="bow">🎀 蝴蝶结</button>
+                            <button class="makeup-btn" data-type="earring">💎 耳环</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="section-title">🎨 颜色选择</div>
+                        <div class="makeup-options">
+                            <div class="color-picker" style="background-color: #FF69B4;" data-color="#FF69B4"></div>
+                            <div class="color-picker" style="background-color: #FF4500;" data-color="#FF4500"></div>
+                            <div class="color-picker" style="background-color: #FFD700;" data-color="#FFD700"></div>
+                            <div class="color-picker" style="background-color: #9370DB;" data-color="#9370DB"></div>
+                            <div class="color-picker" style="background-color: #00CED1;" data-color="#00CED1"></div>
+                            <div class="color-picker" style="background-color: #32CD32;" data-color="#32CD32"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn" id="reset-btn">🔄 重置造型</button>
+                        <button class="action-btn save" id="save-btn">💾 保存造型</button>
+                    </div>
+                </div>
+                
+                <div class="instructions">
+                    <p>点击按钮为跳跳虎添加装扮，选择颜色改变装扮色调！每完成一个完整造型，康佳萍会收到鼓励哦！</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="creator">
+            <p>🐯 本游戏是特别为 <span>康佳萍</span> 定制的跳跳虎化妆游戏！ 🎨</p>
+        </div>
+    </div>
+    
+    <div class="encouragement" id="encouragement-message">
+        <h3>🎉 太棒了！</h3>
+        <div class="encouragement-text" id="encouragement-text">康佳萍，你的化妆技术真棒！</div>
+        <button class="close-btn" id="close-encouragement-btn">继续化妆</button>
+    </div>
+    
+    <!-- 音频元素 -->
+    <audio id="background-music" loop preload="auto">
+        <source src="tiger.mp3" type="audio/mpeg">
+        <!-- 备用音乐 -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-playful-kids-690.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        (function() {
+            'use strict';
+            
+            // 游戏变量
+            let canvas, ctx;
+            let currentColor = "#FF69B4";
+            let activeMakeup = null;
+            let makeupState = {
+                blush: false,
+                lipstick: false,
+                eyeshadow: false,
+                freckles: false,
+                hat: false,
+                glasses: false,
+                bow: false,
+                earring: false
+            };
+            
+            // 鼓励语数组
+            const encouragements = [
+                "康佳萍，你真是个化妆大师！跳跳虎看起来太可爱了！",
+                "康佳萍，这个造型太适合跳跳虎了！你真会搭配！",
+                "康佳萍，跳跳虎从没这么时尚过！你的审美真棒！",
+                "康佳萍，这个妆容让跳跳虎更帅气了！",
+                "康佳萍，你的创意让跳跳虎焕然一新！",
+                "康佳萍，这个造型太有创意了！跳跳虎很喜欢！",
+                "康佳萍，你真是个时尚设计师！跳跳虎的造型棒极了！",
+                "康佳萍，这个颜色搭配太完美了！",
+                "康佳萍，跳跳虎从没这么开心过！谢谢你的巧手！",
+                "康佳萍，你让跳跳虎变成了百变明星！"
+            ];
+            
+            // 初始化游戏
+            function initGame() {
+                console.log("初始化跳跳虎化妆游戏");
+                
+                canvas = document.getElementById('tiger-canvas');
+                ctx = canvas.getContext('2d');
+                
+                // 设置画布大小
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                window.addEventListener('orientationchange', resizeCanvas);
+                
+                // 设置事件监听器
+                setupEventListeners();
+                
+                // 设置音频
+                setupAudio();
+                
+                // 初始绘制
+                drawTiger();
+                
+                console.log("游戏初始化完成");
+            }
+            
+            // 设置画布大小
+            function resizeCanvas() {
+                const container = document.querySelector('.tiger-canvas-container');
+                if (!container) return;
+                
+                const size = Math.min(container.clientWidth, 400);
+                canvas.width = size;
+                canvas.height = size;
+                
+                drawTiger();
+            }
+            
+            // 设置事件监听器
+            function setupEventListeners() {
+                // 化妆按钮事件
+                document.querySelectorAll('.makeup-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const type = this.getAttribute('data-type');
+                        toggleMakeup(type);
+                        this.classList.toggle('active');
+                    });
+                });
+                
+                // 颜色选择器事件
+                document.querySelectorAll('.color-picker').forEach(picker => {
+                    picker.addEventListener('click', function() {
+                        currentColor = this.getAttribute('data-color');
+                        
+                        // 更新所有颜色选择器的边框
+                        document.querySelectorAll('.color-picker').forEach(p => {
+                            p.style.border = "2px solid #8B4513";
+                        });
+                        
+                        this.style.border = "4px solid #FF4500";
+                        
+                        // 如果有激活的化妆效果，重新绘制
+                        if (activeMakeup) {
+                            drawTiger();
+                        }
+                    });
+                });
+                
+                // 动作按钮事件
+                document.getElementById('reset-btn').addEventListener('click', resetMakeup);
+                document.getElementById('save-btn').addEventListener('click', saveMakeup);
+                document.getElementById('close-encouragement-btn').addEventListener('click', function() {
+                    document.getElementById('encouragement-message').style.display = 'none';
+                });
+            }
+            
+            // 设置音频
+            function setupAudio() {
+                const backgroundMusic = document.getElementById('background-music');
+                
+                // 设置音乐音量
+                backgroundMusic.volume = 0.3;
+                
+                // 在用户交互时解锁音频
+                document.addEventListener('touchstart', unlockAudio, { once: true });
+                document.addEventListener('click', unlockAudio, { once: true });
+            }
+            
+            // 解锁音频
+            function unlockAudio() {
+                const backgroundMusic = document.getElementById('background-music');
+                
+                // 尝试播放静音音频以解锁音频上下文
+                backgroundMusic.muted = true;
+                backgroundMusic.play().then(() => {
+                    backgroundMusic.pause();
+                    backgroundMusic.muted = false;
+                    console.log("音频上下文已解锁");
+                    
+                    // 解锁后自动播放音乐
+                    playBackgroundMusic();
+                }).catch(e => {
+                    console.log("音频解锁失败:", e);
+                });
+            }
+            
+            // 播放背景音乐
+            function playBackgroundMusic() {
+                const backgroundMusic = document.getElementById('background-music');
+                
+                // 确保音频已加载
+                backgroundMusic.load();
+                
+                // 尝试播放
+                const playPromise = backgroundMusic.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("背景音乐开始播放");
+                    }).catch(error => {
+                        console.log("自动播放被阻止:", error);
+                    });
+                }
+            }
+            
+            // 切换化妆效果
+            function toggleMakeup(type) {
+                makeupState[type] = !makeupState[type];
+                activeMakeup = makeupState[type] ? type : null;
+                drawTiger();
+                
+                // 检查是否完成了完整造型
+                checkCompleteLook();
+            }
+            
+            // 检查是否完成了完整造型
+            function checkCompleteLook() {
+                // 统计已应用的化妆效果数量
+                let appliedCount = 0;
+                for (let key in makeupState) {
+                    if (makeupState[key]) appliedCount++;
+                }
+                
+                // 如果应用了3个或更多效果，显示鼓励语
+                if (appliedCount >= 3) {
+                    const randomIndex = Math.floor(Math.random() * encouragements.length);
+                    document.getElementById('encouragement-text').textContent = encouragements[randomIndex];
+                    document.getElementById('encouragement-message').style.display = 'block';
+                }
+            }
+            
+            // 重置所有化妆效果
+            function resetMakeup() {
+                for (let key in makeupState) {
+                    makeupState[key] = false;
+                }
+                
+                activeMakeup = null;
+                
+                // 重置按钮状态
+                document.querySelectorAll('.makeup-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 重置颜色选择器边框
+                document.querySelectorAll('.color-picker').forEach(picker => {
+                    picker.style.border = "2px solid #8B4513";
+                });
+                
+                // 重置颜色
+                currentColor = "#FF69B4";
+                
+                drawTiger();
+            }
+            
+            // 保存造型
+            function saveMakeup() {
+                // 创建临时canvas来保存图片
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                
+                // 绘制白色背景
+                tempCtx.fillStyle = '#FFF8E7';
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                
+                // 绘制跳跳虎
+                drawTigerToCanvas(tempCtx, tempCanvas.width, tempCanvas.height);
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = '康佳萍的跳跳虎造型.png';
+                link.href = tempCanvas.toDataURL('image/png');
+                link.click();
+                
+                // 显示保存成功消息
+                alert("康佳萍，跳跳虎造型已保存到您的设备！🐯✨");
+            }
+            
+            // 绘制跳跳虎到指定canvas
+            function drawTigerToCanvas(context, width, height) {
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const size = Math.min(width, height) * 0.4;
+                
+                // 清空画布
+                context.clearRect(0, 0, width, height);
+                
+                // 绘制跳跳虎基础形象
+                drawBaseTiger(context, centerX, centerY, size);
+                
+                // 绘制化妆效果
+                if (makeupState.blush) drawBlush(context, centerX, centerY, size);
+                if (makeupState.lipstick) drawLipstick(context, centerX, centerY, size);
+                if (makeupState.eyeshadow) drawEyeshadow(context, centerX, centerY, size);
+                if (makeupState.freckles) drawFreckles(context, centerX, centerY, size);
+                if (makeupState.hat) drawHat(context, centerX, centerY, size);
+                if (makeupState.glasses) drawGlasses(context, centerX, centerY, size);
+                if (makeupState.bow) drawBow(context, centerX, centerY, size);
+                if (makeupState.earring) drawEarring(context, centerX, centerY, size);
+            }
+            
+            // 绘制跳跳虎
+            function drawTiger() {
+                drawTigerToCanvas(ctx, canvas.width, canvas.height);
+            }
+            
+            // 绘制跳跳虎基础形象
+            function drawBaseTiger(ctx, centerX, centerY, size) {
+                // 保存当前状态
+                ctx.save();
+                
+                // 绘制头部
+                ctx.fillStyle = '#FF8C00';
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY, size * 0.9, size * 0.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制条纹
+                ctx.fillStyle = '#8B4513';
+                // 额头条纹
+                ctx.fillRect(centerX - size * 0.4, centerY - size * 0.3, size * 0.8, size * 0.1);
+                // 脸颊条纹
+                ctx.fillRect(centerX - size * 0.6, centerY, size * 0.2, size * 0.08);
+                ctx.fillRect(centerX + size * 0.4, centerY, size * 0.2, size * 0.08);
+                
+                // 绘制耳朵
+                ctx.fillStyle = '#FF8C00';
+                // 左耳
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.5, centerY - size * 0.5, size * 0.2, size * 0.3, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+                // 右耳
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.5, centerY - size * 0.5, size * 0.2, size * 0.3, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制耳朵内部
+                ctx.fillStyle = '#FFB366';
+                // 左耳内部
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.5, centerY - size * 0.5, size * 0.1, size * 0.15, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+                // 右耳内部
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.5, centerY - size * 0.5, size * 0.1, size * 0.15, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制眼睛
+                ctx.fillStyle = 'white';
+                // 左眼
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.2, centerY - size * 0.1, size * 0.15, size * 0.12, 0, 0, Math.PI * 2);
+                ctx.fill();
+                // 右眼
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.2, centerY - size * 0.1, size * 0.15, size * 0.12, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制眼珠
+                ctx.fillStyle = 'black';
+                // 左眼珠
+                ctx.beginPath();
+                ctx.arc(centerX - size * 0.2, centerY - size * 0.1, size * 0.08, 0, Math.PI * 2);
+                ctx.fill();
+                // 右眼珠
+                ctx.beginPath();
+                ctx.arc(centerX + size * 0.2, centerY - size * 0.1, size * 0.08, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制眼睛高光
+                ctx.fillStyle = 'white';
+                // 左眼高光
+                ctx.beginPath();
+                ctx.arc(centerX - size * 0.22, centerY - size * 0.12, size * 0.03, 0, Math.PI * 2);
+                ctx.fill();
+                // 右眼高光
+                ctx.beginPath();
+                ctx.arc(centerX + size * 0.18, centerY - size * 0.12, size * 0.03, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制鼻子
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY + size * 0.1, size * 0.12, size * 0.08, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制嘴巴
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY + size * 0.2, size * 0.1, 0.2, Math.PI - 0.2);
+                ctx.stroke();
+                
+                // 绘制胡须
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 1;
+                // 左胡须
+                ctx.beginPath();
+                ctx.moveTo(centerX - size * 0.3, centerY + size * 0.15);
+                ctx.lineTo(centerX - size * 0.5, centerY + size * 0.1);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(centerX - size * 0.3, centerY + size * 0.2);
+                ctx.lineTo(centerX - size * 0.5, centerY + size * 0.2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(centerX - size * 0.3, centerY + size * 0.25);
+                ctx.lineTo(centerX - size * 0.5, centerY + size * 0.3);
+                ctx.stroke();
+                // 右胡须
+                ctx.beginPath();
+                ctx.moveTo(centerX + size * 0.3, centerY + size * 0.15);
+                ctx.lineTo(centerX + size * 0.5, centerY + size * 0.1);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(centerX + size * 0.3, centerY + size * 0.2);
+                ctx.lineTo(centerX + size * 0.5, centerY + size * 0.2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(centerX + size * 0.3, centerY + size * 0.25);
+                ctx.lineTo(centerX + size * 0.5, centerY + size * 0.3);
+                ctx.stroke();
+                
+                // 恢复状态
+                ctx.restore();
+            }
+            
+            // 绘制腮红
+            function drawBlush(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                // 左脸颊腮红
+                ctx.fillStyle = currentColor;
+                ctx.globalAlpha = 0.6;
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.4, centerY + size * 0.1, size * 0.15, size * 0.1, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 右脸颊腮红
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.4, centerY + size * 0.1, size * 0.15, size * 0.1, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 绘制口红
+            function drawLipstick(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                ctx.fillStyle = currentColor;
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY + size * 0.2, size * 0.12, size * 0.08, 0, 0, Math.PI);
+                ctx.fill();
+                
+                // 添加光泽效果
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.04, centerY + size * 0.18, size * 0.04, size * 0.02, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 绘制眼影
+            function drawEyeshadow(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                // 左眼眼影
+                ctx.fillStyle = currentColor;
+                ctx.globalAlpha = 0.7;
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.2, centerY - size * 0.1, size * 0.2, size * 0.1, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 右眼眼影
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.2, centerY - size * 0.1, size * 0.2, size * 0.1, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 绘制雀斑
+            function drawFreckles(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                ctx.fillStyle = '#8B4513';
+                ctx.globalAlpha = 0.7;
+                
+                // 在脸颊上绘制雀斑
+                for (let i = 0; i < 8; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const radius = size * 0.3;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius + size * 0.1;
+                    const dotSize = size * 0.02 + Math.random() * size * 0.02;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.restore();
+            }
+            
+            // 绘制帽子
+            function drawHat(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                // 帽檐
+                ctx.fillStyle = currentColor;
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY - size * 0.7, size * 0.6, size * 0.15, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 帽顶
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY - size * 0.85, size * 0.4, size * 0.3, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 帽子装饰
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - size * 0.95, size * 0.08, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 绘制眼镜
+            function drawGlasses(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                // 眼镜框
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = 3;
+                
+                // 左眼镜框
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.2, centerY - size * 0.1, size * 0.2, size * 0.15, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // 右眼镜框
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.2, centerY - size * 0.1, size * 0.2, size * 0.15, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // 眼镜桥
+                ctx.beginPath();
+                ctx.moveTo(centerX - size * 0.05, centerY - size * 0.1);
+                ctx.lineTo(centerX + size * 0.05, centerY - size * 0.1);
+                ctx.stroke();
+                
+                // 镜片
+                ctx.fillStyle = 'rgba(173, 216, 230, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.2, centerY - size * 0.1, size * 0.18, size * 0.13, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.2, centerY - size * 0.1, size * 0.18, size * 0.13, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 绘制蝴蝶结 - 修复：放在头顶位置
+            function drawBow(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                // 蝴蝶结中心 - 放在头顶，两耳之间
+                ctx.fillStyle = currentColor;
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY - size * 0.6, size * 0.12, size * 0.08, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 左蝴蝶结
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - size * 0.6);
+                ctx.bezierCurveTo(
+                    centerX - size * 0.25, centerY - size * 0.7,
+                    centerX - size * 0.3, centerY - size * 0.5,
+                    centerX, centerY - size * 0.6
+                );
+                ctx.fill();
+                
+                // 右蝴蝶结
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - size * 0.6);
+                ctx.bezierCurveTo(
+                    centerX + size * 0.25, centerY - size * 0.7,
+                    centerX + size * 0.3, centerY - size * 0.5,
+                    centerX, centerY - size * 0.6
+                );
+                ctx.fill();
+                
+                // 蝴蝶结中心装饰
+                ctx.fillStyle = '#FFD700';
+                ctx.beginPath();
+                ctx.ellipse(centerX, centerY - size * 0.6, size * 0.05, size * 0.03, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 蝴蝶结飘带
+                ctx.fillStyle = currentColor;
+                ctx.globalAlpha = 0.8;
+                // 左飘带
+                ctx.beginPath();
+                ctx.ellipse(centerX - size * 0.15, centerY - size * 0.5, size * 0.1, size * 0.05, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+                // 右飘带
+                ctx.beginPath();
+                ctx.ellipse(centerX + size * 0.15, centerY - size * 0.5, size * 0.1, size * 0.05, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 绘制耳环
+            function drawEarring(ctx, centerX, centerY, size) {
+                ctx.save();
+                
+                // 左耳环
+                ctx.fillStyle = currentColor;
+                ctx.beginPath();
+                ctx.arc(centerX - size * 0.5, centerY - size * 0.2, size * 0.08, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 右耳环
+                ctx.beginPath();
+                ctx.arc(centerX + size * 0.5, centerY - size * 0.2, size * 0.08, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 耳环光泽
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.beginPath();
+                ctx.arc(centerX - size * 0.52, centerY - size * 0.22, size * 0.02, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.arc(centerX + size * 0.48, centerY - size * 0.22, size * 0.02, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+            
+            // 页面加载完成后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initGame);
+            } else {
+                initGame();
+            }
+        })();
+    </script>
+</body>
+</html>
