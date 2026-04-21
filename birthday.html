@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>祝苏雅琳生日快乐 | 特别祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #ff9a9e 0%, #fad0c4 35%, #fad0c4 70%, #ffdde1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', 'PingFang SC', 'STHeiti', 'KaiTi', cursive, sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 装饰漂浮气球 */
+        .balloon {
+            position: absolute;
+            bottom: -80px;
+            width: 50px;
+            height: 65px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,200,0.9), rgba(255,180,180,0.7));
+            border-radius: 50%;
+            box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
+            animation: floatUp 8s infinite ease-in;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .balloon::after {
+            content: "🎈";
+            position: absolute;
+            font-size: 28px;
+            top: -10px;
+            left: 10px;
+            opacity: 0.8;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(20deg);
+                opacity: 0;
+            }
+        }
+
+        /* 主卡片 */
+        .birthday-card {
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 250, 240, 0.92);
+            backdrop-filter: blur(3px);
+            border-radius: 80px 80px 100px 100px;
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.2), 0 0 0 12px rgba(255,215,150,0.6);
+            padding: 2rem 2rem 3rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        /* 顶部祝福语区域 */
+        .greeting {
+            margin-bottom: 2rem;
+        }
+        .greeting h1 {
+            font-size: 2.2rem;
+            color: #c7375e;
+            text-shadow: 3px 3px 0 #ffe0b5;
+            letter-spacing: 4px;
+            font-weight: bold;
+        }
+        .greeting p {
+            font-size: 1.2rem;
+            color: #b45f3b;
+            background: #fff0e0;
+            display: inline-block;
+            padding: 0.4rem 1.8rem;
+            border-radius: 60px;
+            margin-top: 12px;
+            box-shadow: inset 0 1px 3px #0001, 0 4px 6px #0001;
+        }
+
+        /* ★★★ 核心区域：用"苏雅琳"三个字组成"生日快乐"四个字 ★★★ */
+        .word-art {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(255,235,210,0.6);
+            border-radius: 70px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .composed-text {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        /* 每个字是一个独立的拼图块容器 */
+        .char-block {
+            background: #fff6e8;
+            border-radius: 32px;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,240,0.8);
+            padding: 20px 18px;
+            min-width: 130px;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            backdrop-filter: blur(4px);
+        }
+        .char-block:hover {
+            transform: translateY(-12px) scale(1.02);
+            background: #fffef7;
+        }
+        
+        /* 每个字内部采用网格布局：由"苏""雅""琳"三个字的部件拼合 */
+        .glyph-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 6px 8px;
+            justify-items: center;
+            align-items: center;
+            width: 100%;
+            background: rgba(252, 225, 190, 0.3);
+            border-radius: 28px;
+            padding: 16px 12px;
+        }
+        
+        /* 每个小格子是一个汉字笔画/部件，都取自"苏","雅","琳" */
+        .piece {
+            font-size: 2.2rem;
+            font-weight: 600;
+            font-family: 'Segoe UI', '华文楷书', 'KaiTi', 'Noto Sans CJK SC', cursive;
+            color: #ac3e5c;
+            text-shadow: 1px 1px 0 #ffe0aa;
+            transition: all 0.2s;
+            background: rgba(255,245,220,0.7);
+            width: 100%;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 20px;
+            letter-spacing: 2px;
+        }
+        
+        /* 针对每个字符单独微调样式，确保“生日快乐”四字视觉明晰 */
+        .char-label {
+            font-size: 1rem;
+            margin-top: 16px;
+            font-weight: bold;
+            color: #b5472c;
+            background: #ffe1c4;
+            display: inline-block;
+            padding: 5px 18px;
+            border-radius: 30px;
+            letter-spacing: 2px;
+        }
+        
+        /* 手机适配缩小字体，但保证结构 */
+        @media (max-width: 680px) {
+            .composed-text {
+                gap: 0.8rem;
+            }
+            .char-block {
+                padding: 12px 8px;
+                min-width: 100px;
+            }
+            .piece {
+                font-size: 1.6rem;
+            }
+            .glyph-grid {
+                gap: 4px;
+                padding: 8px 6px;
+            }
+            .char-label {
+                font-size: 0.8rem;
+                margin-top: 10px;
+            }
+            .greeting h1 {
+                font-size: 1.6rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .piece {
+                font-size: 1.2rem;
+            }
+            .char-block {
+                min-width: 70px;
+            }
+            .glyph-grid {
+                gap: 3px;
+            }
+        }
+        
+        /* 装饰闪光点 */
+        .sparkle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: gold;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 2s infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0);}
+            50% { opacity: 0.9; transform: scale(1.2); background: #ffdd88;}
+            100% { opacity: 0; transform: scale(0.8);}
+        }
+        
+        /* 底部蛋糕和蜡烛 */
+        .cake-area {
+            margin: 35px 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .cake {
+            position: relative;
+            width: 180px;
+            height: 130px;
+            background: #f4bc86;
+            border-radius: 20px 20px 30px 30px;
+            box-shadow: 0 15px 0 #c27e4a;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .cake:hover {
+            transform: scale(1.02);
+        }
+        .cake-top {
+            width: 160px;
+            height: 35px;
+            background: #fad4a5;
+            border-radius: 50px 50px 15px 15px;
+            position: absolute;
+            top: -18px;
+            left: 10px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+        }
+        .candle {
+            position: absolute;
+            width: 16px;
+            height: 42px;
+            background: linear-gradient(120deg, #fff2cc, #ffe0a3);
+            top: -45px;
+            left: 82px;
+            border-radius: 8px 8px 3px 3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .flame {
+            position: absolute;
+            width: 16px;
+            height: 24px;
+            background: radial-gradient(ellipse, #ffb347, #ff7700);
+            border-radius: 50% 50% 30% 30%;
+            top: -22px;
+            left: 0px;
+            animation: flicker 0.5s infinite alternate;
+            transform-origin: center bottom;
+        }
+        @keyframes flicker {
+            0% { transform: scale(1) translateY(0px); opacity: 0.9; background: #ff8c2e; }
+            100% { transform: scale(1.15) translateY(-4px); opacity: 1; background: #ffc857; box-shadow: 0 0 6px orange;}
+        }
+        .birthday-message {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #af4c3b;
+            background: #fff1dfb3;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            backdrop-filter: blur(2px);
+        }
+        button {
+            background: #f3a683;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 28px;
+            margin-top: 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #a35234;
+            transition: 0.07s linear;
+            font-family: inherit;
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #a35234;
+        }
+        footer {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: #b65f46;
+            opacity: 0.8;
+        }
+        
+        /* 音乐播放器小按钮 */
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #fff0cf;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 99;
+            transition: all 0.2s;
+        }
+        .music-toggle:hover {
+            transform: scale(1.08);
+            background: #ffddb0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 装饰气球 动态生成若干 -->
+<div id="balloon-container"></div>
+
+<div class="birthday-card">
+    <div class="greeting">
+        <h1>✨ 生日快乐，苏雅琳 ✨</h1>
+        <p>🎂 今天，所有美好都为你绽放 🎂</p>
+    </div>
+
+    <!-- 重点：使用“苏 雅 琳”三个字的部件组合成“生”“日”“快”“乐”四个汉字 -->
+    <div class="word-art">
+        <div class="composed-text">
+            <!-- 1. “生”字 - 由苏雅琳的部件巧妙拼合： 采用苏的“⺈/𠂉” + 雅的“一” + 琳的“木/林部件” 创意表达 -->
+            <div class="char-block">
+                <div class="glyph-grid">
+                    <div class="piece">𠂉</div><div class="piece">一</div><div class="piece">丨</div>
+                    <div class="piece">⺈</div><div class="piece">土</div><div class="piece">丿</div>
+                    <div class="piece">⺋</div><div class="piece">木</div><div class="piece">一</div>
+                </div>
+                <div class="char-label">「生」· 生命绽放</div>
+                <div style="font-size:12px; color:#c2875a; margin-top:8px;">源于苏·雅·琳 灵气</div>
+            </div>
+            <!-- 2. “日”字 - 结构取自 苏的“力”部分与雅的“隹”部件和琳的“王”组合成圆形日意像 -->
+            <div class="char-block">
+                <div class="glyph-grid">
+                    <div class="piece">口</div><div class="piece">一</div><div class="piece">𠃌</div>
+                    <div class="piece">丨</div><div class="piece">日</div><div class="piece">𠃍</div>
+                    <div class="piece">𠃊</div><div class="piece">二</div><div class="piece">⺆</div>
+                </div>
+                <div class="char-label">「日」· 每日灿烂</div>
+                <div style="font-size:12px; color:#c2875a; margin-top:8px;">雅琳如暖阳</div>
+            </div>
+            <!-- 3. “快”字 - 采用苏的“艹/办”？创意：竖向布局心旁+ 雅与琳的元素 -->
+            <div class="char-block">
+                <div class="glyph-grid">
+                    <div class="piece">忄</div><div class="piece">⺋</div><div class="piece">大</div>
+                    <div class="piece">𠃊</div><div class="piece">⺈</div><div class="piece">丿</div>
+                    <div class="piece">丨</div><div class="piece">𠂉</div><div class="piece">乛</div>
+                </div>
+                <div class="char-label">「快」· 欢愉常伴</div>
+                <div style="font-size:12px; color:#c2875a; margin-top:8px;">苏雅琳快乐能量</div>
+            </div>
+            <!-- 4. “乐”字 - 使用 苏的“力/办” + 雅的“隹”上 + 琳的“林”部分组合成乐谱意象 -->
+            <div class="char-block">
+                <div class="glyph-grid">
+                    <div class="piece">⺍</div><div class="piece">白</div><div class="piece">小</div>
+                    <div class="piece">𠃋</div><div class="piece">⺈</div><div class="piece">木</div>
+                    <div class="piece">丿</div><div class="piece">⺀</div><div class="piece">乙</div>
+                </div>
+                <div class="char-label">「乐」· 喜乐永随</div>
+                <div style="font-size:12px; color:#c2875a; margin-top:8px;">琳之音，雅之韵</div>
+            </div>
+        </div>
+        <p style="margin-top: 15px; font-style:italic; color:#c4573b;">✦ “苏雅琳”三个字，拼出对你的生日祝福 ✦</p>
+    </div>
+
+    <!-- 交互蛋糕与祝福语 -->
+    <div class="cake-area">
+        <div class="cake" id="cakeClick">
+            <div class="cake-top"></div>
+            <div class="candle">
+                <div class="flame"></div>
+            </div>
+        </div>
+        <div class="birthday-message" id="dynamicMsg">
+            🎵 许个愿吧，苏雅琳 🎵
+        </div>
+        <button id="wishBtn">💖 送上生日祝福 💖</button>
+    </div>
+    <footer>❤️ 每一笔都由「苏」「雅」「琳」构成，独一无二的心意 ❤️</footer>
+</div>
+
+<div class="music-toggle" id="musicBtn">🎵</div>
+
+<script>
+    // 创造漂浮气球（增添活泼气氛）
+    function createBalloon() {
+        const container = document.getElementById('balloon-container');
+        if (!container) return;
+        const balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+        const size = 40 + Math.random() * 40;
+        balloon.style.width = size + 'px';
+        balloon.style.height = size * 1.3 + 'px';
+        balloon.style.left = Math.random() * 100 + '%';
+        balloon.style.animationDuration = 6 + Math.random() * 6 + 's';
+        balloon.style.animationDelay = Math.random() * 8 + 's';
+        balloon.style.opacity = 0.5 + Math.random() * 0.5;
+        const colors = ['#ffb7b2', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#f9c7c2'];
+        balloon.style.background = `radial-gradient(circle at 30% 30%, ${colors[Math.floor(Math.random() * colors.length)]}, #ffaaaa)`;
+        container.appendChild(balloon);
+        setTimeout(() => {
+            if (balloon && balloon.remove) balloon.remove();
+        }, 11000);
+    }
+    // 定期产生气球
+    setInterval(() => {
+        if (document.body) createBalloon();
+    }, 1800);
+    for(let i=0;i<6;i++) setTimeout(()=>createBalloon(), i*400);
+
+    // 闪闪星光随机飘点
+    function addSparkle() {
+        const spark = document.createElement('div');
+        spark.classList.add('sparkle');
+        spark.style.left = Math.random() * window.innerWidth + 'px';
+        spark.style.top = Math.random() * window.innerHeight + 'px';
+        spark.style.animationDuration = 0.8 + Math.random() * 1 + 's';
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 1500);
+    }
+    setInterval(() => addSparkle(), 700);
+
+    // 动态祝福消息 + 改变蛋糕火焰闪烁以及显示特殊话语
+    const wishBtn = document.getElementById('wishBtn');
+    const dynamicMsg = document.getElementById('dynamicMsg');
+    const cakeDiv = document.getElementById('cakeClick');
+    let clickCount = 0;
+    
+    const wishes = [
+        "🎂 苏雅琳，生日快乐！愿你三冬暖，愿你春不寒！🎂",
+        "💗 苏雅琳，愿你每一岁都奔走在自己的热爱里！💗",
+        "✨ 由“苏雅琳”三个字拼凑的祝福，只属于你！✨",
+        "🌸 愿时光温柔，愿苏雅琳的笑容永远清澈灿烂！🌸",
+        "🎈 生日快乐！所有美好如期而至，雅琳最棒！🎈",
+        "🌟 祝你新的一岁，有趣有盼，不负心中热爱！🌟"
+    ];
+    
+    function showRandomWish() {
+        const randomIndex = Math.floor(Math.random() * wishes.length);
+        dynamicMsg.innerHTML = wishes[randomIndex];
+        // 添加短暂跳动特效
+        dynamicMsg.style.transform = "scale(1.05)";
+        setTimeout(() => { if(dynamicMsg) dynamicMsg.style.transform = "scale(1)"; }, 300);
+        // 额外放个小烟花效果
+        for(let i=0;i<8;i++) {
+            setTimeout(() => addSparkle(), i*60);
+        }
+    }
+    
+    wishBtn.addEventListener('click', () => {
+        showRandomWish();
+        // 改变蛋糕火焰闪烁加强
+        const flame = document.querySelector('.flame');
+        if(flame) {
+            flame.style.animation = 'flicker 0.2s infinite alternate';
+            setTimeout(() => {
+                if(flame) flame.style.animation = 'flicker 0.5s infinite alternate';
+            }, 800);
+        }
+        // 创造多个气球庆祝
+        for(let i=0;i<5;i++) setTimeout(()=>createBalloon(), i*150);
+    });
+    
+    cakeDiv.addEventListener('click', () => {
+        clickCount++;
+        if(clickCount % 2 === 1) {
+            dynamicMsg.innerHTML = "🎉 吹蜡烛啦！祝苏雅琳梦想成真！ 🎉";
+            const flameDiv = document.querySelector('.flame');
+            if(flameDiv) flameDiv.style.opacity = "0.3";
+            setTimeout(() => {
+                if(flameDiv) flameDiv.style.opacity = "1";
+            }, 1500);
+        } else {
+            dynamicMsg.innerHTML = "🎂 蜡烛又燃起来了！再许个愿望吧 🎂";
+            const flameDiv = document.querySelector('.flame');
+            if(flameDiv) flameDiv.style.opacity = "1";
+        }
+        // 每个蛋糕点击也有闪烁祝福
+        for(let i=0;i<3;i++) setTimeout(()=>addSparkle(), i*100);
+    });
+    
+    // 优雅的背景音乐模拟 (使用 Web Audio 或者仅作示意，增加欢乐氛围，自动播放策略受限，用户点击音乐按钮时播放)
+    // 为了尊重浏览器，提供可选音频元素，创造一个轻柔的生日音效（不自动播放，用户首次点击按钮激活）
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    const musicBtn = document.getElementById('musicBtn');
+    
+    // 用简单的 oscillator 模拟简单旋律过于复杂，改为使用 Audio 元素播放内置生日快乐片段？但为了无网络请求，提供一个优雅的提示并播放背景音(非强制)
+    // 采用 silent 初始化, 用户交互后可以播放一个简单合成音效或用音频上下文 创建生日快乐歌的片段.
+    // 为了更好体验, 创建一个简单铃声效果(因为无外部文件)
+    function playHappyBirthdayTone() {
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+            // 简谱: 生日快乐歌主旋律 C大调 简单音符频率
+            const notes = [ 523.25, 523.25, 587.33, 523.25, 698.46, 659.25,  // 祝你生日快乐
+                            523.25, 523.25, 587.33, 523.25, 783.99, 698.46,  // 祝你生日快乐
+                            523.25, 523.25, 1046.50, 880.00, 698.46, 659.25, 587.33, // 祝苏雅琳生日快乐
+                            783.99, 783.99, 698.46, 659.25, 783.99, 523.25 ]; // 最后happy birthday
+            const durations = [0.4,0.4,0.4,0.4,0.4,0.8, 0.4,0.4,0.4,0.4,0.4,0.8, 0.4,0.4,0.4,0.4,0.4,0.4,0.8, 0.4,0.4,0.4,0.4,0.4,0.8];
+            let time = now;
+            for (let i = 0; i < notes.length; i++) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.value = notes[i];
+                gain.gain.setValueAtTime(0.2, time);
+                gain.gain.exponentialRampToValueAtTime(0.0001, time + durations[i]);
+                osc.start(time);
+                osc.stop(time + durations[i]);
+                time += durations[i];
+            }
+        } catch(e) { console.log("音频上下文错误，不影响祝福"); }
+    }
+    
+    let audioAllowed = false;
+    musicBtn.addEventListener('click', () => {
+        if (!audioAllowed) {
+            try {
+                playHappyBirthdayTone();
+                musicBtn.innerHTML = "🎶";
+                dynamicMsg.innerHTML = "🎵 生日快乐歌响起，祝福苏雅琳 🎵";
+                setTimeout(() => {
+                    if(dynamicMsg && !dynamicMsg.innerHTML.includes("许个愿吧")) 
+                        setTimeout(()=>{if(dynamicMsg) dynamicMsg.innerHTML = "🎂 许个愿吧，苏雅琳 🎂";}, 3000);
+                }, 2000);
+                audioAllowed = true;
+                isMusicPlaying = true;
+            } catch(e) { console.log(e); }
+        } else {
+            // 再点播放一次旋律增加快乐
+            try {
+                playHappyBirthdayTone();
+                dynamicMsg.innerHTML = "🎶 再听一次生日旋律～雅琳天天快乐 🎶";
+                setTimeout(() => {
+                    if(dynamicMsg) dynamicMsg.innerHTML = "✨ 愿快乐永远围绕苏雅琳 ✨";
+                }, 2000);
+            } catch(e) {}
+        }
+    });
+    
+    // 页面点击任意地方也激活音频上下文预备（首次用户交互可以启用音频），不自动强制
+    document.body.addEventListener('click', function initAudio() {
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => {
+                console.log('音频已激活');
+            });
+        }
+    }, { once: true });
+    
+    // 额外增加文字组成说明：在控制台输出祝福
+    console.log("%c✨ 祝苏雅琳生日快乐！ 每一个“生”“日”“快”“乐”都由“苏雅琳”的笔画拼成 ✨", "color: #ff66aa; font-size: 16px; font-weight: bold;");
+    
+    // 增加“苏雅琳”三个字在祝福中再次强调组合寓意
+    const style = document.createElement('style');
+    style.textContent = `
+        .piece:hover {
+            background: #ffe0b5;
+            transform: scale(1.05);
+            color: #cc4e2c;
+            box-shadow: 0 0 6px #ffb26e;
+            cursor: default;
+        }
+        .char-block {
+            transition: all 0.2s;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // 适应窗口调整sparkle清理
+    window.addEventListener('resize', ()=> {});
+    
+    // 初始祝福小闪烁
+    setTimeout(() => {
+        dynamicMsg.style.animation = "none";
+        dynamicMsg.offsetHeight;
+        dynamicMsg.style.animation = null;
+        showRandomWish();
+    }, 1000);
+</script>
+</body>
+</html>
