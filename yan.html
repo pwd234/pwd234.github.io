@@ -14,11 +14,33 @@
             background: #ffeef2;
             font-family: "Microsoft YaHei", sans-serif;
             overflow-x: hidden;
+            position: relative;
+        }
+        /* 花瓣容器 */
+        .petal {
+            position: fixed;
+            background-color: #ffc8d6;
+            border-radius: 50% 0 50% 50%;
+            opacity: 0.7;
+            animation: fall linear infinite;
+            z-index: 0;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
         .container {
             max-width: 420px;
             margin: 0 auto;
             padding: 30px 20px;
+            position: relative;
+            z-index: 1;
         }
         .title {
             text-align: center;
@@ -83,7 +105,7 @@
     </div>
 
     <script>
-        // 滚动监听，进入视口就浮现
+        // 滚动浮现
         const items = document.querySelectorAll('.photo-item');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -92,8 +114,23 @@
                 }
             })
         }, {threshold:0.15});
-
         items.forEach(el=> observer.observe(el));
+
+        // 生成飘落花瓣
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            // 随机大小、位置、下落时长
+            const size = Math.random() * 12 + 6;
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.animationDuration = Math.random() * 5 + 4 + 's';
+            document.body.appendChild(petal);
+            // 花瓣落地移除
+            setTimeout(()=>petal.remove(), 9000);
+        }
+        setInterval(createPetal, 400);
     </script>
 </body>
 </html>
