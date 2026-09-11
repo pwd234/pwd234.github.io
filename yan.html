@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>给你的惊喜</title>
+<style>
+  body {
+    margin: 0;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: "微软雅黑", sans-serif;
+    padding: 30px 0;
+  }
+
+  /* 照片动画 */
+  .photo {
+    width: 260px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(255,105,180,.6);
+    opacity: 0;
+    transform: scale(.8);
+    animation: show 1.2s forwards;
+    margin: 12px;
+  }
+  @keyframes show {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* 文字动画 */
+  .line {
+    color: #ff69b4;
+    font-size: 24px;
+    line-height: 1.8;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeUp 1.2s forwards;
+    margin: 6px 0;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+  <!-- 第1张照片 + 第1句话 -->
+  < img class="photo" src="photo1.jpg" style="animation-delay:.3s">
+  <p class="line" style="animation-delay:1.8s">第一次见你，我就记住了你的样子</p >
+
+  <!-- 第2张照片 + 第2句话 -->
+  < img class="photo" src="photo2.jpg" style="animation-delay:3.3s">
+  <p class="line" style="animation-delay:4.8s">后来每次看到你笑，我都觉得世界亮了</p >
+
+  <!-- 第3张照片 + 第3句话 -->
+  < img class="photo" src="photo3.jpg" style="animation-delay:6.3s">
+  <p class="line" style="animation-delay:7.8s">这些照片，是我偷偷收藏的温柔</p >
+
+  <!-- 第4张照片 + 第4句话 -->
+  < img class="photo" src="photo4.jpg" style="animation-delay:9.3s">
+  <p class="line" style="animation-delay:10.8s">今天想认真跟你说一句——</p >
+
+  <!-- 最后一句，没有照片，单独放大突出 -->
+  <p class="line" style="animation-delay:12.3s; font-size:30px; color:#ff2e88;">我喜欢你 💕</p >
+</body>
+</html>
